@@ -12,9 +12,31 @@
 
 #include "minishell.h"
 
+void	print_tokens(t_token *t)
+{
+	while (t)
+	{
+		printf("[%d] \"%s\"\n", t->type, t->value);
+		t = t->next;
+	}
+}
+void	free_tokens(t_token *token)
+{
+	t_token	*tmp;
+
+	while (token)
+	{
+		tmp = token->next;
+		free(token->value);
+		free(token);
+		token = tmp;
+	}
+}
+
 int main(void)
 {
     char *line;
+    t_token	*token_list;
 
     while(1)
     {
@@ -26,7 +48,13 @@ int main(void)
             break;
         }
         if (*line)
-            add_history(line);
+        {
+			token_list = NULL;
+			tokens(line, &token_list); // 👈 CALL THE LEXER HERE
+			print_tokens(token_list);  // 👈 optional: debug print function
+			free_tokens(token_list);   // 👈 optional: clean up
+		}
+        add_history(line);
         free(line);
     }
     return (0);
