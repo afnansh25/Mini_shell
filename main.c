@@ -3,40 +3,48 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:29:10 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/07/23 17:19:55 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/07/25 23:04:08 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	print_tokens(t_token *t)
+void	print_cmd_list(t_cmd *cmd)
 {
-	while (t)
+	int i;
+	int j;
+
+	i = 1;
+	while (cmd)
 	{
-		printf("[%d] \"%s\"\n", t->type, t->value);
-		t = t->next;
+		printf("🟢 Command #%d:\n", i);
+		j = 0;
+		if (cmd->argv)
+		{
+			printf("  argv: ");
+			while (cmd->argv[j])
+				printf("[%s] ", cmd->argv[j++]);
+			printf("\n");
+		}
+		if (cmd->infile != -1)
+			printf("  infile: %d\n", cmd->infile);
+		if (cmd->outfile != -1)
+			printf("  outfile: %d (%s)\n", cmd->outfile, cmd->append ? "append" : "truncate");
+		for (j = 0; j < cmd->n_heredocs; j++)
+			printf("  heredoc[%d]: \"%s\" (quoted=%d)\n", j, cmd->heredocs[j].limiter, cmd->heredocs[j].quoted);
+		cmd = cmd->next;
+		i++;
 	}
 }
-void	free_tokens(t_token *token)
-{
-	t_token	*tmp;
 
-	while (token)
-	{
-		tmp = token->next;
-		free(token->value);
-		free(token);
-		token = tmp;
-	}
-}
-
-int main(void)
+int main()
 {
-    char *line;
+    char 	*line;
     t_token	*token_list;
+	t_cmd	*cmd_list;
 
     while(1)
     {
@@ -45,14 +53,19 @@ int main(void)
         if (!line)
         {
             printf("exit\n");
-            break;
+            break; 
         }
         if (*line)
         {
 			token_list = NULL;
-			tokens(line, &token_list); // 👈 CALL THE LEXER HERE
-			print_tokens(token_list);  // 👈 optional: debug print function
-			free_tokens(token_list);   // 👈 optional: clean up
+			cmd_list = NULL;
+			tokens(line, &token_list); //  CALL THE LEXER HERE
+			//print_tokens(token_list);  // optional: debug print function
+			cmd_list = parse_pipeline(token_list); // parser: turn tokens into command structs
+			// execute(cmd_list);             // later: when you build exec
+			print_cmd_list(cmd_list); 
+			free_cmd_list(cmd_list);         // free everything safely
+			free_tokens(token_list);         // free token list
 		}
         add_history(line);
         free(line);
