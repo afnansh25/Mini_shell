@@ -101,6 +101,7 @@ void    sigint_handler(int sig);
 void    setup_signals(void);
 
 //clean
+void	print_tokens(t_token *t); //for debug remove later
 void	free_tokens(t_token *token);
 void	*free_arr(char **arr);
 void	free_cmd_list(t_cmd *cmd_list);

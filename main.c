@@ -29,6 +29,8 @@ void	print_cmd_list(t_cmd *cmd)
 				printf("[%s] ", cmd->argv[j++]);
 			printf("\n");
 		}
+		if (!cmd->argv)
+			printf("⚠️ argv is NULL for command #%d\n", i);
 		if (cmd->infile != -1)
 			printf("  infile: %d\n", cmd->infile);
 		if (cmd->outfile != -1)
@@ -61,9 +63,12 @@ int main()
 			cmd_list = NULL;
 			tokens(line, &token_list); //  CALL THE LEXER HERE
 			//print_tokens(token_list);  // optional: debug print function
-			cmd_list = parse_pipeline(token_list); // parser: turn tokens into command structs
-			// execute(cmd_list);             // later: when you build exec
-			print_cmd_list(cmd_list); 
+			cmd_list = parse_pipeline(token_list);
+			if (!cmd_list)
+				printf("❌ parse_pipeline returned NULL!\n");
+			else
+				print_cmd_list(cmd_list);
+			//execution
 			free_cmd_list(cmd_list);         // free everything safely
 			free_tokens(token_list);         // free token list
 		}
