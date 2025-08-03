@@ -1,6 +1,8 @@
 NAME        = minishell
 
-SRC         = main.c lexer.c signal.c parsing.c here_doc.c cmd_args.c clean.c
+SRC         = main.c parsing/lexer.c parsing/signal.c parsing/parsing.c \
+				parsing/here_doc.c parsing/cmd_args.c parsing/clean.c \
+					parsing/lexer_utils.c parsing/redirect.c
 
 OBJ         = $(SRC:.c=.o)
 
@@ -9,7 +11,7 @@ LIBFT := $(LIBFT_DIR)/libft.a
 LIBFT_INC := -I$(LIBFT_DIR)
 
 CC          = cc
-FLAGS      	= -Wall -Wextra -Werror
+FLAGS      	= -Wall -Wextra -Werror -I.
 rl_FLAGS    = -I/opt/vagrant/embedded/include/readline -L/opt/vagrant/embedded/lib -lreadline
 DEL			= rm -rf
 
