@@ -37,48 +37,42 @@ t_token_type	get_token_type(char c, char next, int *len)
 	return (WORD);
 }
 
-char *get_word(char *line, int i, int *len)
+char *get_word(char *line, int i, int *len, t_quote_type *quote)
 {
-    int  j = 0;
-    char *raw;
-    char *word;
+	char *raw;
+	char *word;
 
-    while (line[i + j] && line[i + j] != ' ' &&
-           line[i + j] != '|' && line[i + j] != '<' && line[i + j] != '>')
-    {
-        if (line[i + j] == '\'' || line[i + j] == '\"')
-        {
-            char q = line[i + j++];
-            while (line[i + j] && line[i + j] != q)
-                j++;
-            if (line[i + j] == q)
-                j++;
-        }
-        else
-            j++;
-    }
-    *len = j;
-    raw = ft_substr(line, i, j);
-    if (!raw)
-        return NULL;
-    word = rmv_quotes(raw);
-    free(raw);
-    return word;
+	*quote = NO_QUOTE;
+	if (line[i] == '\'')
+		*quote = SINGLE_QUOTE;
+	else if (line[i] == '"')
+		*quote = DOUBLE_QUOTE;
+	*len = scan_word_length(line, i);
+	raw = ft_substr(line, i, *len);
+	if (!raw)
+		return (NULL);
+	word = rmv_quotes(raw);
+	free(raw);
+	return (word);
 }
 
 int	create_token(char *line, int *i, t_token **tok, int *len)
 {
 	t_token_type	type;
+	t_quote_type quote;
 	char			*val;
 
 	type = get_token_type(line[*i], line[*i + 1], len);
 	if (type == WORD)
-		val = get_word(line, *i, len);
+		val = get_word(line, *i, len, &quote);
 	else
+	{
 		val = ft_substr(line, *i, *len);
+		quote = NO_QUOTE;
+	}
 	if (!val)
 		return (0);
-	*tok = new_token(val, type);
+	*tok = new_token(val, type, quote);
 	if (!*tok)
 	{
 		free(val);

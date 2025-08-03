@@ -14,7 +14,7 @@
 
 
 // char token like "echo", ">"
-t_token	*new_token(char *token, t_token_type type)
+t_token	*new_token(char *token, t_token_type type, t_quote_type quote)
 {
 	t_token	*new_token;
 
@@ -23,6 +23,7 @@ t_token	*new_token(char *token, t_token_type type)
 		return (NULL);
 	new_token->value = token;
     new_token->type = type;
+	new_token->quote = quote;
 	new_token->next = NULL;
 	return (new_token);
 }
@@ -101,6 +102,29 @@ int	is_invalid_sequence(char *line, int i)
 		return (1);
 	return (0);
 }
+
+int scan_word_length(char *line, int i)
+{
+	int j = 0;
+	char q;
+
+	while (line[i + j] && line[i + j] != ' ' &&
+		line[i + j] != '|' && line[i + j] != '<' && line[i + j] != '>')
+	{
+		if (line[i + j] == '\'' || line[i + j] == '\"')
+		{
+			q = line[i + j++];
+			while (line[i + j] && line[i + j] != q)
+				j++;
+			if (line[i + j] == q)
+				j++;
+		}
+		else
+			j++;
+	}
+	return (j);
+}
+
 char *rmv_quotes(const char *s)
 {
 	int i;

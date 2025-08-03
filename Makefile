@@ -2,7 +2,8 @@ NAME        = minishell
 
 SRC         = main.c parsing/lexer.c parsing/signal.c parsing/parsing.c \
 				parsing/here_doc.c parsing/cmd_args.c parsing/clean.c \
-					parsing/lexer_utils.c parsing/redirect.c
+					parsing/lexer_utils.c parsing/redirect.c parsing/expan.c \
+						parsing/expan_utils.c
 
 OBJ         = $(SRC:.c=.o)
 

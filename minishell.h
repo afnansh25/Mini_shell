@@ -35,11 +35,19 @@ typedef enum e_token_type
     HEREDOC //<<
 }   t_token_type;
 
+typedef enum e_quote_type
+{
+    NO_QUOTE,
+    SINGLE_QUOTE,
+    DOUBLE_QUOTE
+} t_quote_type;
+
 
 typedef struct s_token
 {
     char            *value;     // What is the token? ("echo", ">", "file.txt")
     t_token_type    type;       // What kind? (WORD, REDIR, PIPE, etc.)
+    t_quote_type    quote;
     struct s_token  *next;      // Next token in the line (linked list)
 }   t_token;
 
@@ -75,19 +83,21 @@ typedef struct s_cmd
 
 
 //lexer
+int	handle_token(t_token **head, char *line, int *i);
 void	tokens(char *line, t_token **head);
 char *rmv_quotes(const char *s);
-char *get_word(char *line, int i, int *len);
+char *get_word(char *line, int i, int *len, t_quote_type *quote);
 t_token_type	get_token_type(char c, char next, int *len);
 
 //lexer_utils
 int	is_invalid_sequence(char *line, int i);
+int scan_word_length(char *line, int i);
 void	print_syntax_error(char *line, int i);
-t_token	*new_token(char *token, t_token_type type);
+t_token	*new_token(char *token, t_token_type type, t_quote_type quote);
 void	token_add_back(t_token **token, t_token *new);
-void set_token_types(t_token *tokens);
 
 //parsing
+void set_token_types(t_token *tokens);
 t_cmd	*parse_pipeline(t_token *token_list);
 t_cmd   *parse_cmd(t_token **token_ptr);
 void    init_cmd(t_cmd *cmd);
@@ -108,10 +118,20 @@ void	handle_redir_in(t_cmd *cmd, t_token **token_ptr);
 //cmd_args
 t_arg *collect_args(t_token **token_ptr);
 void	handle_cmd_and_args(t_cmd *cmd, t_token **token_ptr);
-void	handle_args(t_cmd *cmd, t_token **token_ptr);
 int 	add_arg(t_arg **list, char *val); // to collect args
 char	**arg_list_to_array(t_arg *list); // convert to argv
 void	free_arg_list(t_arg *list);       // free if error
+
+//expan
+char    *expand_variables(char *input, char **envp);
+void    expand_token_list(t_token *token, char **envp);
+char    *handle_dollar(char *input, int *i, char **envp);
+char    *extract_var_name(char *s, int *len);
+char    *get_var_value(char *var_name, char **envp);
+
+//expan_utils
+char *append_str(char *str, char *suffix);
+char *append_char(char *str, char c);
 
 //handle signales
 void    rl_replace_line(const char *text, int clear_undo);

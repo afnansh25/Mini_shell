@@ -12,11 +12,13 @@
 
 #include "minishell.h"
 
-int main()
+int main(int argc, char **argv, char **envp)
 {
     char 	*line;
     t_token	*token_list;
 	t_cmd	*cmd_list;
+    (void)argc;
+    (void)argv;
 
     while(1)
     {
@@ -34,6 +36,7 @@ int main()
 			tokens(line, &token_list); //  CALL THE LEXER HERE
 			print_tokens(token_list);  // optional: debug print function
             set_token_types(token_list);
+            expand_token_list(token_list, envp);
             debug_print_tokens(token_list);
 			cmd_list = parse_pipeline(token_list);
 			if (!cmd_list)
