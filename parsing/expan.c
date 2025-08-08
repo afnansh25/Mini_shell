@@ -1,9 +1,19 @@
-//header
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expan.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/04 13:50:47 by maabdulr          #+#    #+#             */
+/*   Updated: 2025/08/05 14:26:41 by ashaheen         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
 #include "minishell.h"
 
-int g_exit_code;
-
-char *get_var_value(char *var_name, char **envp)
+char *get_var_value(char *var_name, t_shell *shell)
 {
 	char	*res;
 	int		i;
@@ -11,16 +21,16 @@ char *get_var_value(char *var_name, char **envp)
 
 	if (ft_strncmp(var_name, "?", 2) == 0)
 	{
-		res = ft_itoa(g_exit_code);
+		res = ft_itoa(shell->exit_code);
 		return (res);
 	}
 	len = ft_strlen(var_name);
 	i = 0;
-	while (envp[i])
+	while (shell->envp[i])
 	{
-		if (!ft_strncmp(envp[i], var_name, len) && envp[i][len] == '=')
+		if (!ft_strncmp(shell->envp[i], var_name, len) && shell->envp[i][len] == '=')
 		{
-			res = ft_strdup(&envp[i][len + 1]);
+			res = ft_strdup(&shell->envp[i][len + 1]);
 			return (res);
 		}
 		i++;
@@ -42,7 +52,7 @@ char    *extract_var_name(char *s, int *len)
     return(res);
 }
 
-char *handle_dollar(char *input, int *i, char **envp)
+char *handle_dollar(char *input, int *i, t_shell *shell)
 {
 	char	*var_name;
 	char	*var_value;
@@ -50,18 +60,18 @@ char *handle_dollar(char *input, int *i, char **envp)
 
 	if (input[*i + 1] == '?')
 	{
-		var_value = ft_itoa(g_exit_code);
+		var_value = ft_itoa(shell->exit_code);
 		*i += 2;
 		return (var_value);
 	}
 	var_name = extract_var_name(&input[*i + 1], &var_len);
-	var_value = get_var_value(var_name, envp);
+	var_value = get_var_value(var_name, shell);
 	*i += var_len + 1;
 	free(var_name);
 	return (var_value);
 }
 
-char *expand_variables(char *input, char **envp)
+char *expand_variables(char *input, t_shell *shell)
 {
 	char	*result;
 	char	*expansion;
@@ -73,7 +83,7 @@ char *expand_variables(char *input, char **envp)
 	{
 		if (input[i] == '$')
 		{
-			expansion = handle_dollar(input, &i, envp);
+			expansion = handle_dollar(input, &i, shell);
 			result = append_str(result, expansion);
 			free(expansion);
 		}
@@ -86,7 +96,7 @@ char *expand_variables(char *input, char **envp)
 	return (result);
 }
 
-void expand_token_list(t_token *token, char **envp)
+void expand_token_list(t_token *token, t_shell *shell)
 {
     char *expanded;
 
@@ -98,7 +108,7 @@ void expand_token_list(t_token *token, char **envp)
                 token->type == REDIR_IN || token->type == REDIR_OUT ||
                 token->type == REDIR_APPEND || token->type == HEREDOC)
             {
-                expanded = expand_variables(token->value, envp);
+                expanded = expand_variables(token->value, shell);
                 free(token->value);
                 token->value = expanded;
             }

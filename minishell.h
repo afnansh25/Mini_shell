@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/02 17:58:57 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/05 15:41:19 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
+typedef struct s_shell
+{
+	int exit_code;
+	char **envp;
+}	t_shell;
 
 typedef enum e_token_type
 {
@@ -81,7 +86,16 @@ typedef struct s_cmd
     struct s_cmd *next;   // pointer to next command (for pipe)
 }   t_cmd;
 
+typedef struct s_exec
+{
+	int		**pipes;
+	pid_t	*pids;
+	int		cmd_count;
+	int		status;
+    t_cmd   *cmd_head;
+}	t_exec;
 
+//parsing part
 //lexer
 int	handle_token(t_token **head, char *line, int *i);
 void	tokens(char *line, t_token **head);
@@ -123,11 +137,11 @@ char	**arg_list_to_array(t_arg *list); // convert to argv
 void	free_arg_list(t_arg *list);       // free if error
 
 //expan
-char    *expand_variables(char *input, char **envp);
-void    expand_token_list(t_token *token, char **envp);
-char    *handle_dollar(char *input, int *i, char **envp);
+char    *expand_variables(char *input, t_shell *shell);
+void    expand_token_list(t_token *token, t_shell *shell);
+char    *handle_dollar(char *input, int *i, t_shell *shell);
 char    *extract_var_name(char *s, int *len);
-char    *get_var_value(char *var_name, char **envp);
+char    *get_var_value(char *var_name, t_shell *shell);
 
 //expan_utils
 char *append_str(char *str, char *suffix);
@@ -137,13 +151,51 @@ char *append_char(char *str, char c);
 void    rl_replace_line(const char *text, int clear_undo);
 void    sigint_handler(int sig);
 void    setup_signals(void);
+void	sigint_heredoc_handler(int sig);
 
 //clean
 void	print_tokens(t_token *tok); //for debug remove later
 void	print_cmd_list(t_cmd *cmd); //debug
-void debug_print_tokens(t_token *tok); //debug
+void    debug_print_tokens(t_token *tok); //debug
 void	free_tokens(t_token *token);
 void	*free_arr(char **arr);
 void	free_cmd_list(t_cmd *cmd_list);
+
+//execution part
+//execution
+void execute_pipeline(t_cmd *cmd_list, t_shell *shell);
+int exec_builtin_in_child(t_cmd *cmd);
+int exec_builtin_in_parent(t_cmd *cmd);
+int is_parent_builtin(char *cmd);
+int is_child_builtin(char *cmd);
+int count_cmds(t_cmd *cmd);
+void wait_all_children(t_exec *exec, t_shell *shell);
+
+//heredoc
+void	process_all_heredocs(t_cmd *cmd, t_shell *shell);
+int	handle_here_doc(t_heredoc *hdoc, t_shell shell, t_cmd *cmd_list);
+void	read_heredoc_input(int write_fd, char *limiter, int quoted, t_shell *shell);
+char	*expand_line_heredoc(char *line, t_shell *shell);
+
+//path
+char	*get_cmd_path(char *cmd, t_shell *shell, t_exec *exec, t_cmd *cmd_list);
+char	*build_cmd_path(char **paths, char *cmd);
+char	*find_path_variable(t_shell *shell);
+
+//pipes
+t_exec	*init_exec_struct(t_cmd *cmd_list);
+
+//fork
+void fork_and_execute_all(t_cmd *cmd_list, t_exec *exec, t_shell *shell);
+void    run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i);
+void    close_pipe_parent(t_exec *exec);
+void    close_pipe_files_child(t_exec *exec, t_cmd *cmd);
+void	setup_io(t_cmd *cmd, t_exec *exec, int i);
+void xdup2(int oldfd, int newfd, t_exec *exec);
+
+//error
+void error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code);
+void	free_cmd_list(t_cmd *cmd_list);
+void	free_exec_data(t_exec *exec);
 
 #endif

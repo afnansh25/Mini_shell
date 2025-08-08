@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:29:10 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/02 19:59:27 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/05 14:27:17 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,14 @@
 int main(int argc, char **argv, char **envp)
 {
     char 	*line;
+    t_shell	shell;
     t_token	*token_list;
 	t_cmd	*cmd_list;
     (void)argc;
     (void)argv;
 
+    shell.exit_code = 0;
+	shell.envp = envp;
     while(1)
     {
         setup_signals(); 
@@ -43,7 +46,7 @@ int main(int argc, char **argv, char **envp)
 				printf("❌ parse_pipeline returned NULL!\n");
 			else
 				print_cmd_list(cmd_list);
-			//execution
+            execute_pipeline(cmd_list, &shell);
 			free_cmd_list(cmd_list);         // free everything safely
 			free_tokens(token_list);      // free token list
 		}
