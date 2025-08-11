@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:24:28 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/02 19:55:50 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/09 18:58:04 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void    init_cmd(t_cmd *cmd)
     cmd->heredocs = NULL;
     cmd->n_heredocs = 0;
     cmd->next = NULL;
+    cmd->redir_error = 0;
 }
 void set_token_types(t_token *tokens)
 {

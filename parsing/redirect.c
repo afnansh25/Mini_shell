@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirect.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 17:44:19 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/02 17:46:38 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/09 18:58:56 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	handle_redir_in(t_cmd *cmd, t_token **token_ptr)
 	if (cmd->infile == -1)
 	{
 		perror((*token_ptr)->value);
-		return ;
+		cmd->redir_error = 1; 
 	}
 	*token_ptr = (*token_ptr)->next;
 }

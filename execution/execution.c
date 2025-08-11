@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exection.c                                         :+:      :+:    :+:   */
+/*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:51:20 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/08/05 15:43:11 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/09 14:49:11 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int is_child_builtin(char *cmd)
         return (1);
     if(ft_strncmp(cmd, "pwd", 4) == 0)
         return (1);
-    if(ft_strncmp(cmd, "env", 3) == 0)
+    if(ft_strncmp(cmd, "env", 4) == 0)
         return (1);
     return(0);
 }
@@ -34,29 +34,29 @@ int is_parent_builtin(char *cmd)
         return (1);
     return(0);
 }
-int exec_builtin_in_parent(t_cmd *cmd)
-{
-    if (ft_strncmp(cmd->argv[0], "cd", 3) == 0)
-        return (exec_cd(cmd->argv));
-    if (ft_strncmp(cmd->argv[0], "export", 7) == 0)
-        return (exec_export(cmd->argv));
-    if (ft_strncmp(cmd->argv[0], "exit", 5) == 0)
-        return (exec_exit(cmd->argv));
-    if (ft_strncmp(cmd->argv[0], "unset", 6) == 0)
-        return (exec_unset(cmd->argv));
-    return(0);
-}
+// int exec_builtin_in_parent(t_cmd *cmd)
+// {
+//     if (ft_strncmp(cmd->argv[0], "cd", 3) == 0)
+//         return (exec_cd(cmd->argv));
+//     if (ft_strncmp(cmd->argv[0], "export", 7) == 0)
+//         return (exec_export(cmd->argv));
+//     if (ft_strncmp(cmd->argv[0], "exit", 5) == 0)
+//         return (exec_exit(cmd->argv));
+//     if (ft_strncmp(cmd->argv[0], "unset", 6) == 0)
+//         return (exec_unset(cmd->argv));
+//     return(0);
+// }
 
-int exec_builtin_in_child(t_cmd *cmd)
-{
-    if (ft_strncmp(cmd->argv[0], "echo", 5) == 0)
-        return (exec_echo(cmd->argv));
-    if (ft_strncmp(cmd->argv[0], "pwd", 4) == 0)
-        return (exec_pwd(cmd->argv));
-    if (ft_strncmp(cmd->argv[0], "env", 4) == 0)
-        return (exec_env(cmd->argv));
-    return(0);
-}
+// int exec_builtin_in_child(t_cmd *cmd)
+// {
+//     if (ft_strncmp(cmd->argv[0], "echo", 5) == 0)
+//         return (exec_echo(cmd->argv));
+//     if (ft_strncmp(cmd->argv[0], "pwd", 4) == 0)
+//         return (exec_pwd(cmd->argv));
+//     if (ft_strncmp(cmd->argv[0], "env", 4) == 0)
+//         return (exec_env(cmd->argv));
+//     return(0);
+// }
 
 int count_cmds(t_cmd *cmd)
 {
@@ -100,12 +100,12 @@ void execute_pipeline(t_cmd *cmd_list, t_shell *shell)
 	handle_all_heredocs(cmd_list, shell);
     if (shell->exit_code == 130)
         return;
-	if (cmd_list && cmd_list->next == NULL
-        && is_parent_builtin(cmd_list->argv[0]))
-	{
-		shell->exit_code = exec_builtin_in_parent(cmd_list);
-		return ;
-	}
+	// if (cmd_list && cmd_list->next == NULL
+    //     && is_parent_builtin(cmd_list->argv[0]))
+	// {
+	// 	shell->exit_code = exec_builtin_in_parent(cmd_list);
+	// 	return ;
+	// }
     exec = init_exec_struct(cmd_list);
     fork_and_execute_all(cmd_list, exec, shell);
     wait_all_children(exec, shell);

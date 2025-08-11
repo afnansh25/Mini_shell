@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc_ex.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 14:27:52 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/05 15:33:54 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/09 14:49:00 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	read_heredoc_input(int write_fd, char *limiter, int quoted, t_shell *shell)
 		line = readline("> ");
 		if (!line)
 			break ;
-		if (ft_strcmp(line, limiter) == 0)
+		if (ft_strncmp(line, limiter, len) == 0)
 		{
 			free(line);
 			break ;
@@ -81,7 +81,7 @@ void	read_heredoc_input(int write_fd, char *limiter, int quoted, t_shell *shell)
 	exit(0);
 }
 
-int	handle_here_doc(t_heredoc *hdoc, t_shell shell, t_cmd *cmd_list)
+int	handle_here_doc(t_heredoc *hdoc, t_shell *shell, t_cmd *cmd_list)
 {
 	int	pipe_fd[2];
 	int	pid;

@@ -89,28 +89,28 @@ void	*free_arr(char **arr)
 	return (NULL);
 }
 
-void	free_cmd_list(t_cmd *cmd_list)
-{
-    t_cmd   *tmp;
-    int i;
+// void	free_cmd_list(t_cmd *cmd_list)
+// {
+//     t_cmd   *tmp;
+//     int i;
 
-    while (cmd_list)
-    {
-        if(cmd_list->argv)
-            free_arr(cmd_list->argv);
-        if (cmd_list->heredocs)
-		{
-			i = 0;
-			while (i < cmd_list->n_heredocs)
-				free(cmd_list->heredocs[i++].limiter);
-			free(cmd_list->heredocs);
-		}
-        if(cmd_list->infile != -1)
-            close(cmd_list->infile);
-        if(cmd_list->outfile != -1)
-            close(cmd_list->outfile);
-		tmp = cmd_list->next;
-		free(cmd_list);
-		cmd_list = tmp;
-    }
-}
+//     while (cmd_list)
+//     {
+//         if(cmd_list->argv)
+//             free_arr(cmd_list->argv);
+//         if (cmd_list->heredocs)
+// 		{
+// 			i = 0;
+// 			while (i < cmd_list->n_heredocs)
+// 				free(cmd_list->heredocs[i++].limiter);
+// 			free(cmd_list->heredocs);
+// 		}
+//         if(cmd_list->infile != -1)
+//             close(cmd_list->infile);
+//         if(cmd_list->outfile != -1)
+//             close(cmd_list->outfile);
+// 		tmp = cmd_list->next;
+// 		free(cmd_list);
+// 		cmd_list = tmp;
+//     }
+// }

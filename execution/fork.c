@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fork.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 15:30:31 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/05 15:47:30 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/09 18:59:34 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,14 +78,16 @@ void    run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i)
 {
     char    *path;
 
+    if (cmd->redir_error)
+        exit(1);
     signal(SIGINT, SIG_DFL);
     signal(SIGQUIT, SIG_DFL);
     setup_io(cmd, exec, i);
     close_pipe_files_child(exec, cmd);
     if(!cmd->argv || !cmd->argv[0] || cmd->argv[0][0] == '\0')
         exit(0);
-    if(is_child_builtin(cmd->argv[0]))
-        exit(exec_builtin_in_child(cmd));
+    // if(is_child_builtin(cmd->argv[0]))
+    //     exit(exec_builtin_in_child(cmd));
     path = get_cmd_path(cmd->argv[0], shell, exec, exec->cmd_head);
     execve(path, cmd->argv, shell->envp);
     perror(cmd->argv[0]); 

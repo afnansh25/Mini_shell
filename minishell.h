@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/05 15:41:19 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/09 18:57:26 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,8 @@ typedef struct s_cmd
     int append;           // 1 if >>
     t_heredoc   *heredocs; // Array of heredoc structures
     int n_heredocs;       // Number of heredocs
-    struct s_cmd *next;   // pointer to next command (for pipe)
+    struct s_cmd *next; // pointer to next command (for pipe)
+    int     redir_error;
 }   t_cmd;
 
 typedef struct s_exec
@@ -172,8 +173,9 @@ int count_cmds(t_cmd *cmd);
 void wait_all_children(t_exec *exec, t_shell *shell);
 
 //heredoc
+void handle_all_heredocs(t_cmd *cmd_list, t_shell *shell);
 void	process_all_heredocs(t_cmd *cmd, t_shell *shell);
-int	handle_here_doc(t_heredoc *hdoc, t_shell shell, t_cmd *cmd_list);
+int	handle_here_doc(t_heredoc *hdoc, t_shell *shell, t_cmd *cmd_list);
 void	read_heredoc_input(int write_fd, char *limiter, int quoted, t_shell *shell);
 char	*expand_line_heredoc(char *line, t_shell *shell);
 
