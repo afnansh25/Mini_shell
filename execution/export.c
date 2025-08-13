@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 16:54:20 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/13 15:19:57 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/13 17:21:51 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,13 +120,11 @@ int export_one(t_shell *shell, char *arg)
 		free(value);
 		return (1);
 	}
-	if (has_eq)
-	{
-		env_set(&shell->envp, name, value);
-		export_remove(&shell->exp, name);
-	}
-	else if (env_index_of(shell->envp, name) == -1 && export_index_of(shell->exp, name) == -1)
-			export_add(&shell->exp, name);
+    if (has_eq && !env_set(&shell->envp, name, value))
+        export_remove(&shell->exp, name);
+    else if (!has_eq && env_index_of(shell->envp, name) == -1
+        && export_index_of(shell->exp, name) == -1)
+        export_add(&shell->exp, name);
 	free(name);
 	free(value);
 	return (0);
