@@ -3,14 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:29:10 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/09 14:55:18 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/08/11 18:03:43 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+char	**dup_envp(char **src)
+{
+	int		n;
+	int		i;
+	char	**dst;
+
+	n = 0;
+	while (src[n])
+		n++;
+	dst = (char **)malloc(sizeof(char *) * (n + 1));
+	if (!dst)
+		return (NULL);
+	i = 0;
+	while (i < n)
+	{
+		dst[i] = ft_strdup(src[i]);
+		if (!dst[i])
+			return (NULL); // simple version; we can add cleanup later
+		i++;
+	}
+	dst[n] = NULL;
+	return (dst);
+}
 
 int main(int ac, char **av, char **envp)
 {
@@ -26,7 +50,9 @@ int main(int ac, char **av, char **envp)
         return(0);
     }
     shell.exit_code = 0;
-	shell.envp = envp;
+	shell.envp = dup_envp(envp);
+	if (!shell.envp)
+		return (1);
     while(1)
     {
         setup_signals(); 

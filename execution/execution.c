@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:51:20 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/08/09 14:49:11 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/08/12 14:07:43 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,18 +34,23 @@ int is_parent_builtin(char *cmd)
         return (1);
     return(0);
 }
-// int exec_builtin_in_parent(t_cmd *cmd)
-// {
-//     if (ft_strncmp(cmd->argv[0], "cd", 3) == 0)
-//         return (exec_cd(cmd->argv));
-//     if (ft_strncmp(cmd->argv[0], "export", 7) == 0)
-//         return (exec_export(cmd->argv));
-//     if (ft_strncmp(cmd->argv[0], "exit", 5) == 0)
-//         return (exec_exit(cmd->argv));
-//     if (ft_strncmp(cmd->argv[0], "unset", 6) == 0)
-//         return (exec_unset(cmd->argv));
-//     return(0);
-// }
+int exec_builtin_in_parent(t_cmd *cmd, t_shell *shell)
+{
+    int interactive;
+    int status;
+    
+    interactive = isatty(0);
+    status = 0;
+    // if (ft_strncmp(cmd->argv[0], "cd", 3) == 0)
+    //     return (exec_cd(cmd->argv));
+    if (ft_strncmp(cmd->argv[0], "export", 7) == 0)
+        return (exec_export(cmd->argv, shell));
+    if (!ft_strncmp(cmd->argv[0], "exit", 5))
+		return (exec_exit(cmd->argv, shell, interactive));
+    if (ft_strncmp(cmd->argv[0], "unset", 6) == 0)
+        return (exec_unset(cmd->argv, shell));
+    return(status);
+}
 
 // int exec_builtin_in_child(t_cmd *cmd)
 // {
@@ -100,12 +105,12 @@ void execute_pipeline(t_cmd *cmd_list, t_shell *shell)
 	handle_all_heredocs(cmd_list, shell);
     if (shell->exit_code == 130)
         return;
-	// if (cmd_list && cmd_list->next == NULL
-    //     && is_parent_builtin(cmd_list->argv[0]))
-	// {
-	// 	shell->exit_code = exec_builtin_in_parent(cmd_list);
-	// 	return ;
-	// }
+	if (cmd_list && cmd_list->next == NULL
+        && is_parent_builtin(cmd_list->argv[0]))
+	{
+		shell->exit_code = exec_builtin_in_parent(cmd_list, shell);
+		return ;
+	}
     exec = init_exec_struct(cmd_list);
     fork_and_execute_all(cmd_list, exec, shell);
     wait_all_children(exec, shell);

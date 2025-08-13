@@ -5,7 +5,8 @@ SRC         = main.c parsing/lexer.c parsing/signal.c parsing/parsing.c \
 					parsing/lexer_utils.c parsing/redirect.c parsing/expan.c \
 						parsing/expan_utils.c execution/execution.c execution/path.c \
 							execution/fork.c execution/pipes.c execution/here_doc_ex.c \
-								execution/error.c
+								execution/error.c execution/exit.c execution/unset.c execution/export.c \
+									execution/export_extend.c
 							
 OBJ         = $(SRC:.c=.o)
 

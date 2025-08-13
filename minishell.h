@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/09 18:57:26 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/08/12 15:38:09 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,8 +165,8 @@ void	free_cmd_list(t_cmd *cmd_list);
 //execution part
 //execution
 void execute_pipeline(t_cmd *cmd_list, t_shell *shell);
-int exec_builtin_in_child(t_cmd *cmd);
-int exec_builtin_in_parent(t_cmd *cmd);
+// int exec_builtin_in_child(t_cmd *cmd);
+int exec_builtin_in_parent(t_cmd *cmd, t_shell *shell);
 int is_parent_builtin(char *cmd);
 int is_child_builtin(char *cmd);
 int count_cmds(t_cmd *cmd);
@@ -200,4 +200,27 @@ void error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code);
 void	free_cmd_list(t_cmd *cmd_list);
 void	free_exec_data(t_exec *exec);
 
+//parnet_buitlin
+//exit
+int         _exit(char **argv, t_shell *shell, int interactive);
+long long	ft_atoll(const char *s);
+int         is_numeric_str(char *s);
+
+//unset
+int is_valid_identifier(char *s);
+int env_index_of(char **envp, char *name);
+int env_index_of(char **envp, char *name);
+int exec_unset(char **argv, t_shell *shell);
+
+//export
+int parse_export_arg(char *arg, char **name, char **value, int *has_eq);
+char *make_env_pair(char *name, char *value);
+int env_set(char ***penvp, char *name, char *value);
+int	export_one(char ***penvp, char *arg);
+int	exec_export(char **argv, t_shell *shell);
+
+void	export_print(char **envp);
+void	print_escaped_value_fd(int fd, const char *s);
+
+char	**dup_envp(char **src);
 #endif
