@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 16:54:20 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/12 14:40:38 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/13 15:19:57 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,18 +48,15 @@ char *make_env_pair(char *name, char *value)
 
     tmp = NULL;
     pair = NULL;
+	if (!value)
+        return (ft_strdup(name));
     tmp = ft_strjoin(name, "=");
     if (!tmp)
         return (NULL);
-    if (value)
-    {
-        pair = ft_strjoin(tmp, value);
-        free(tmp);
-        if (!pair)
-            return (NULL);
-    }
-    else
-        pair = tmp;
+    pair = ft_strjoin(tmp, value);
+    free(tmp);
+    if (!pair)
+        return (NULL);
     return (pair);
 }
 
@@ -106,7 +103,7 @@ int env_set(char ***penvp, char *name, char *value)
 }
 
 // ONE HELPER (handles a single arg)
-int	export_one(char ***penvp, char *arg)
+int export_one(t_shell *shell, char *arg)
 {
 	char	*name;
 	char	*value;
@@ -116,17 +113,20 @@ int	export_one(char ***penvp, char *arg)
 		return (1);
 	if (!is_valid_identifier(name))
 	{
-		ft_putstr_fd("minishell: export: ", 2);
-		ft_putstr_fd(name, 2);
-		ft_putendl_fd(": not a valid identifier", 2);
+		ft_putstr_fd("minishell: export: `", 2);
+		ft_putstr_fd(arg, 2);
+		ft_putendl_fd("': not a valid identifier", 2);
 		free(name);
 		free(value);
 		return (1);
 	}
 	if (has_eq)
-		env_set(penvp, name, value);
-	else if (env_index_of(*penvp, name) == -1)
-		env_set(penvp, name, "");
+	{
+		env_set(&shell->envp, name, value);
+		export_remove(&shell->exp, name);
+	}
+	else if (env_index_of(shell->envp, name) == -1 && export_index_of(shell->exp, name) == -1)
+			export_add(&shell->exp, name);
 	free(name);
 	free(value);
 	return (0);
@@ -141,12 +141,12 @@ int	exec_export(char **argv, t_shell *shell)
 	i = 1;
 	if (argv[1] == NULL)
 	{
-		export_print(shell->envp);
+		export_print(shell->envp, shell->exp);
 		return (0);
 	}
 	while (argv[i]) 
 	{
-		if (export_one(&shell->envp, argv[i]))
+		if (export_one(shell, argv[i]))
 			had_error = 1;
 		i++;
 	}

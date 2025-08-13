@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/12 15:38:09 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/13 14:52:01 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,15 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <signal.h>
+# include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 
 typedef struct s_shell
 {
-	int exit_code;
-	char **envp;
+    int exit_code;
+    char **envp;
+    char **exp;
 }	t_shell;
 
 typedef enum e_token_type
@@ -202,7 +204,7 @@ void	free_exec_data(t_exec *exec);
 
 //parnet_buitlin
 //exit
-int         _exit(char **argv, t_shell *shell, int interactive);
+int         exec_exit(char **argv, t_shell *shell, int interactive);
 long long	ft_atoll(const char *s);
 int         is_numeric_str(char *s);
 
@@ -216,11 +218,14 @@ int exec_unset(char **argv, t_shell *shell);
 int parse_export_arg(char *arg, char **name, char **value, int *has_eq);
 char *make_env_pair(char *name, char *value);
 int env_set(char ***penvp, char *name, char *value);
-int	export_one(char ***penvp, char *arg);
+int export_one(t_shell *shell, char *arg);
 int	exec_export(char **argv, t_shell *shell);
 
-void	export_print(char **envp);
+void    export_print(char **envp, char **exp);
 void	print_escaped_value_fd(int fd, const char *s);
+void   export_remove(char ***pexp, char *name);
+int   export_add(char ***pexp, char *name);
+int   export_index_of(char **exp, char *name);
 
 char	**dup_envp(char **src);
 #endif

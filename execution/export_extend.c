@@ -6,13 +6,13 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 14:40:08 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/12 15:11:17 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/13 14:48:31 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	print_escaped_value_fd(int fd, const char *s)
+void    print_escaped_value_fd(int fd, const char *s)
 {
 	int	i;
 
@@ -22,8 +22,8 @@ void	print_escaped_value_fd(int fd, const char *s)
 	while (s[i])
 	{
 		if (s[i] == '"' || s[i] == '\\' || s[i] == '$')
-			ft_putchar_fd('\\', fd);
-        ft_putchar_fd(s[i], fd);
+				ft_putchar_fd('\\', fd);
+		ft_putchar_fd(s[i], fd);
 		i++;
 	}	
 }
@@ -41,13 +41,13 @@ int cmp_env_names(char *a, char *b)
 		ca = (unsigned char)a[i];
 		cb = (unsigned char)b[i];
 		if (ca != cb)
-			return ((int)(ca - cb));
+				return ((int)(ca - cb));
 		i++;
 	}
 	if (a[i] == '=' || a[i] == '\0')
 	{
 		if (b[i] == '=' || b[i] == '\0')
-			return (0);
+				return (0);
 		return (-1);
 	}
 	if (b[i] == '=' || b[i] == '\0')
@@ -87,45 +87,56 @@ void sort_env_ptrs(char **a)
 	}
 }
 
-void	export_print(char **envp)
+void    export_print(char **envp, char **exp)
 {
 	int		n;
+	int		m;
 	int		i;
 	int		j;
 	char	**copy;
 	char	*e;
 
 	n = 0;
-	while (envp[n])
-		n++;
-	copy = (char **)malloc(sizeof(char *) * (n + 1));
-	if (!copy)
-		return ;
-	i = 0;
-	while (i < n)
-	{
-		copy[i] = envp[i];
-		i++;
-	}
-	copy[n] = NULL;
-	sort_env_ptrs(copy);
-	i = 0;
-	while (copy[i])
-	{
-		e = copy[i];
-		ft_putstr_fd("declare -x ", 1);
-		j = 0;
-		while (e[j] && e[j] != '=')
-			ft_putchar_fd(e[j++], 1);
-		if (e[j] == '=')
-		{
-			ft_putstr_fd("=\"", 1);
-			print_escaped_value_fd(1, e + j + 1);
-			ft_putendl_fd("\"", 1);
-		}
-		else
-			ft_putchar_fd('\n', 1);
-		i++;
-	}
-	free(copy);
+    while (envp[n])
+            n++;
+    m = 0;
+    if (exp)
+        while (exp[m])
+            m++;
+    copy = (char **)malloc(sizeof(char *) * (n + m + 1));
+    if (!copy)
+        return ;
+    i = 0;
+    while (i < n)
+    {
+        copy[i] = envp[i];
+        i++;
+    }
+    j = 0;
+    while (j < m)
+    {
+        copy[i + j] = exp[j];
+        j++;
+    }
+    copy[n + m] = NULL;
+    sort_env_ptrs(copy);
+    i = 0;
+    while (copy[i])
+    {
+        e = copy[i];
+        ft_putstr_fd("declare -x ", 1);
+        j = 0;
+        while (e[j] && e[j] != '=')
+            ft_putchar_fd(e[j++], 1);
+        if (e[j] == '=')
+        {
+        	ft_putstr_fd("=\"", 1);
+            print_escaped_value_fd(1, e + j + 1);
+            ft_putendl_fd("\"", 1);
+        }
+        else
+        	ft_putchar_fd('\n', 1);
+        i++;
+    }
+    free(copy);
 }

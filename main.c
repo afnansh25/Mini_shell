@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:29:10 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/11 18:03:43 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/13 14:57:13 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,12 @@ char	**dup_envp(char **src)
 	{
 		dst[i] = ft_strdup(src[i]);
 		if (!dst[i])
-			return (NULL); // simple version; we can add cleanup later
+		{
+			while (i > 0)
+				free(dst[--i]);
+			free(dst);
+			return (NULL);
+		}
 		i++;
 	}
 	dst[n] = NULL;
@@ -51,8 +56,9 @@ int main(int ac, char **av, char **envp)
     }
     shell.exit_code = 0;
 	shell.envp = dup_envp(envp);
+	shell.exp = NULL;
 	if (!shell.envp)
-		return (1);
+			return (1);
     while(1)
     {
         setup_signals(); 
