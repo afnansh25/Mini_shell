@@ -121,10 +121,10 @@ int export_one(t_shell *shell, char *arg)
 		return (1);
 	}
     if (has_eq && !env_set(&shell->envp, name, value))
-        export_remove(&shell->exp, name);
+        {export_remove(&shell->exp, name);}
     else if (!has_eq && env_index_of(shell->envp, name) == -1
         && export_index_of(shell->exp, name) == -1)
-        export_add(&shell->exp, name);
+        {export_add(&shell->exp, name);}
 	free(name);
 	free(value);
 	return (0);

@@ -66,9 +66,9 @@ void    env_remove_at(char **envp, int idx)
 
 void	print_unset_invalid(char *name, int *had_error)
 {
-	ft_putstr_fd("minishell: unset: ", 2);
+	ft_putstr_fd("minishell: unset: '", 2);
 	ft_putstr_fd(name, 2);
-	ft_putendl_fd(": not a valid identifier", 2);
+	ft_putendl_fd("': not a valid identifier", 2);
     *had_error = 1;
 }
 
