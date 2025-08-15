@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:00:02 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/13 14:49:30 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/13 18:21:38 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,11 +86,12 @@ int	exec_unset(char **argv, t_shell *shell)
             print_unset_invalid(argv[i], &had_error);
 		else
 		{
+			export_remove(&shell->exp, argv[i]);
 			idx = env_index_of(shell->envp, argv[i]);
 			while (idx != -1)
 			{
-				env_remove_at(shell->envp, idx);
-				idx = env_index_of(shell->envp, argv[i]);
+					env_remove_at(shell->envp, idx);
+					idx = env_index_of(shell->envp, argv[i]);
 			}
 		}
 		i++;
