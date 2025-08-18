@@ -6,12 +6,12 @@
 /*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 15:30:31 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/09 18:59:34 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/08/11 17:50:09 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
+#include <errno.h>
 void xdup2(int oldfd, int newfd, t_exec *exec)
 {
 	if (dup2(oldfd, newfd) == -1)
@@ -74,9 +74,18 @@ void    close_pipe_parent(t_exec *exec)
     }
 }
 
+int ft_isspace(int c)
+{
+    return (c == ' '  || c == '\t' || c == '\n' || 
+            c == '\v' || c == '\f' || c == '\r');
+}
+
 void    run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i)
 {
     char    *path;
+    int     exit_code;
+    int     is_empty = 1; //--
+    int     j = 0; //---
 
     if (cmd->redir_error)
         exit(1);
@@ -84,15 +93,70 @@ void    run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i)
     signal(SIGQUIT, SIG_DFL);
     setup_io(cmd, exec, i);
     close_pipe_files_child(exec, cmd);
-    if(!cmd->argv || !cmd->argv[0] || cmd->argv[0][0] == '\0')
-        exit(0);
-    // if(is_child_builtin(cmd->argv[0]))
-    //     exit(exec_builtin_in_child(cmd));
+    /* Handle empty command (including "") */
+       if (!cmd->argv || !cmd->argv[0])//--
+    {
+        ft_putstr_fd("minishell: : command not found\n", 2);
+        exit(127);
+    }
+        /* Check if command is all whitespace */
+    while (cmd->argv[0][j]) //---
+    {
+        if (!ft_isspace(cmd->argv[0][j]))
+        {
+            is_empty = 0;
+            break;
+        }
+        j++;
+    }
+    if (is_empty)
+    {
+        ft_putstr_fd("minishell: ", 2);
+        ft_putstr_fd(cmd->argv[0], 2);
+        ft_putstr_fd(": command not found\n", 2);
+        exit(127);
+    }
+    // Handle variable expansion as command
+    if (cmd->argv[0][0] == '$')
+    {
+        char *var_name = cmd->argv[0] + 1;
+        char *var_value = get_var_value(var_name, shell);
+        if (var_value)
+        {
+            ft_putstr_fd("minishell: ", 2);
+            ft_putstr_fd(var_value, 2);
+            ft_putstr_fd(": command not found\n", 2);
+            free(var_value);
+        }
+        else
+        {
+            ft_putstr_fd("minishell: ", 2);
+            ft_putstr_fd(cmd->argv[0], 2);
+            ft_putstr_fd(": unbound variable\n", 2);
+        }
+        exit(127);
+    }
+    if(is_child_builtin(cmd->argv[0]))
+        exit(exec_builtin_in_child(cmd, shell));
     path = get_cmd_path(cmd->argv[0], shell, exec, exec->cmd_head);
-    execve(path, cmd->argv, shell->envp);
-    perror(cmd->argv[0]); 
+    if (execve(path, cmd->argv, shell->envp) == -1)
+    {
+        if (errno == ENOENT)
+        {
+            ft_putstr_fd("minishell: ", 2);
+            ft_putstr_fd(cmd->argv[0], 2);
+            ft_putstr_fd(": command not found\n", 2);
+            exit_code = 127;
+        }
+        else
+        {
+            perror(cmd->argv[0]);
+            exit_code = 126;
+        }
+        free(path);
+        exit(exit_code);
+    }
     free(path);
-    exit(126);
 }
 
 void fork_and_execute_all(t_cmd *cmd_list, t_exec *exec, t_shell *shell)

@@ -6,11 +6,12 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:29:10 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/13 14:57:13 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/18 16:45:14 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 
 char	**dup_envp(char **src)
 {
@@ -29,12 +30,7 @@ char	**dup_envp(char **src)
 	{
 		dst[i] = ft_strdup(src[i]);
 		if (!dst[i])
-		{
-			while (i > 0)
-				free(dst[--i]);
-			free(dst);
-			return (NULL);
-		}
+			return (NULL); // simple version; we can add cleanup later
 		i++;
 	}
 	dst[n] = NULL;
@@ -55,10 +51,10 @@ int main(int ac, char **av, char **envp)
         return(0);
     }
     shell.exit_code = 0;
-	shell.envp = dup_envp(envp);
 	shell.exp = NULL;
+	shell.envp = dup_envp(envp);
 	if (!shell.envp)
-			return (1);
+		return (1);
     while(1)
     {
         setup_signals(); 

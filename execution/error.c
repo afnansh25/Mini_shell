@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 15:41:45 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/09 14:51:01 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/08/10 19:03:04 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,13 +77,48 @@ void	free_cmd_list(t_cmd *cmd_list)
 	}
 }
 
+// void error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code)
+// {
+//     // Special handling for variable expansion errors
+//     if (msg && msg[0] == '$' && exec && exec->shell)
+//     {
+//         char *var_name = msg + 1;
+//         char *var_value = get_var_value(var_name, exec->shell);
+        
+//         if (var_value && *var_value)
+//         {
+//             ft_putstr_fd("minishell: ", 2);
+//             ft_putstr_fd(var_value, 2);  // Show the VALUE (e.g. "maram")
+//             ft_putstr_fd(": command not found\n", 2);
+//             free(var_value);
+//         }
+//         else if (!var_value)
+//         {
+//             ft_putstr_fd("minishell: ", 2);
+//             ft_putstr_fd(msg, 2);
+//             ft_putstr_fd(": unbound variable\n", 2);
+//         }
+//         else  // var_value exists but is empty
+//         {
+//             ft_putstr_fd("minishell: ", 2);
+//             ft_putstr_fd(msg, 2);
+//             ft_putstr_fd(": command not found\n", 2);
+//         }
+//     }
+//     else
+//     {
+//         perror(msg);
+//     }
+
+//     free_exec_data(exec);
+//     free_cmd_list(cmd_list);
+//     exit(exit_code);
+// }
+
 void error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code)
 {
-	free_exec_data(exec);
-	free_cmd_list(cmd_list);
-	perror(msg);
-	exit(exit_code);
+    perror(msg);
+    free_exec_data(exec);
+    free_cmd_list(cmd_list);
+    exit(exit_code);
 }
-
-
-

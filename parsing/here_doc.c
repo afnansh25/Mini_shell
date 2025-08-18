@@ -76,10 +76,10 @@ t_heredoc_node *collect_heredocs(t_token **token_ptr, int *count)
 		*token_ptr = (*token_ptr)->next;
 		if (!*token_ptr)
 			break;
-        if ((*token_ptr)->quote == SINGLE_QUOTE || (*token_ptr)->quote == DOUBLE_QUOTE)
-            quoted = 1;
-        else
-            quoted = 0;
+		if ((*token_ptr)->quote == SINGLE_QUOTE || (*token_ptr)->quote == DOUBLE_QUOTE)
+			quoted = 1;
+		else
+			quoted = 0;
 		if (add_heredoc(&list, (*token_ptr)->value, quoted))
 			(*count)++;
 		 *token_ptr = (*token_ptr)->next;

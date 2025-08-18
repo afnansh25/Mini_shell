@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/13 14:52:01 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/18 16:44:46 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,8 @@ typedef struct s_exec
 	int		cmd_count;
 	int		status;
     t_cmd   *cmd_head;
+    t_shell  *shell;  //--
+
 }	t_exec;
 
 //parsing part
@@ -167,7 +169,7 @@ void	free_cmd_list(t_cmd *cmd_list);
 //execution part
 //execution
 void execute_pipeline(t_cmd *cmd_list, t_shell *shell);
-// int exec_builtin_in_child(t_cmd *cmd);
+int exec_builtin_in_child(t_cmd *cmd, t_shell *shell);
 int exec_builtin_in_parent(t_cmd *cmd, t_shell *shell);
 int is_parent_builtin(char *cmd);
 int is_child_builtin(char *cmd);
@@ -187,7 +189,7 @@ char	*build_cmd_path(char **paths, char *cmd);
 char	*find_path_variable(t_shell *shell);
 
 //pipes
-t_exec	*init_exec_struct(t_cmd *cmd_list);
+t_exec	*init_exec_struct(t_cmd *cmd_list , t_shell *shell);
 
 //fork
 void fork_and_execute_all(t_cmd *cmd_list, t_exec *exec, t_shell *shell);
@@ -201,6 +203,16 @@ void xdup2(int oldfd, int newfd, t_exec *exec);
 void error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code);
 void	free_cmd_list(t_cmd *cmd_list);
 void	free_exec_data(t_exec *exec);
+
+//bultin_child
+int exec_echo(char **av);
+int exec_pwd(char **av);
+int exec_env(char **av, t_shell *shell);
+
+//bultin_cd
+int exec_cd(char **av, t_shell *shell);
+char *get_env_value(char *name, t_shell *shell);
+void update_env_var(char *name, char *value, t_shell *shell);
 
 //parnet_buitlin
 //exit
@@ -227,5 +239,5 @@ void   export_remove(char ***pexp, char *name);
 int   export_add(char ***pexp, char *name);
 int   export_index_of(char **exp, char *name);
 
-char	**dup_envp(char **src);
+
 #endif

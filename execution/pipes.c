@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   pipes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 18:11:58 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/05 15:44:55 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/10 14:30:07 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_exec	*init_exec_struct(t_cmd *cmd_list)
+t_exec	*init_exec_struct(t_cmd *cmd_list,  t_shell *shell)
 {
 	t_exec	*exec;
 	int		i;
@@ -23,6 +23,7 @@ t_exec	*init_exec_struct(t_cmd *cmd_list)
 	exec->cmd_head  = cmd_list;
 	exec->cmd_count = count_cmds(cmd_list);
 	exec->status = 0;
+	exec->shell = shell;
 	exec->pipes = malloc(sizeof(int *) * (exec->cmd_count - 1));
 	if (!exec->pipes)
 		error_exit("malloc", exec, cmd_list, 1);
