@@ -102,9 +102,11 @@ void execute_pipeline(t_cmd *cmd_list, t_shell *shell)
 {
 	t_exec  *exec;
 
+    if (!cmd_list)
+        {return;}
 	handle_all_heredocs(cmd_list, shell);
     if (shell->exit_code == 130)
-        return;
+        {return;}
 	if (cmd_list && cmd_list->next == NULL
         && cmd_list->argv && is_parent_builtin(cmd_list->argv[0]))
 	    {

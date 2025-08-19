@@ -102,23 +102,38 @@ int	handle_token(t_token **head, char *line, int *i)
 void	tokens(char *line, t_token **head)
 {
 	int	i;
+	int last;
 
 	i = 0;
-	while (line[i])
-	{
-		if (line[i] == ' ')
-		{
-			i++;
-			continue;
-		}
-		if (is_invalid_sequence(line, i))
-		{
-			print_syntax_error(line, i);
-			*head = NULL;
-			return ;
-		}
-		if (!handle_token(head, line, &i))
-			return ;
-	}
+    while (line[i])
+    {
+        if (line[i] == ' ')
+        {
+            i++;
+            continue;
+        }
+        if (is_invalid_sequence(line, i))
+        {
+            print_syntax_error(line, i);
+            *head = NULL;
+            return ;
+        }
+        if (!handle_token(head, line, &i))
+            return ;
+    }
+    if (*head)
+    {
+        last = ft_strlen(line) - 1;
+        while (last >= 0 && line[last] == ' ')
+            last--;
+        if (last >= 0 && (line[last] == '|' || line[last] == '<'
+                        || line[last] == '>'))
+        {
+            print_syntax_error(line, last);
+            free_tokens(*head);
+            *head = NULL;
+        }
+    }
 }
+
 
