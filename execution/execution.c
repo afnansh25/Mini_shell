@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:51:20 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/08/18 16:47:06 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:02:18 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ void execute_pipeline(t_cmd *cmd_list, t_shell *shell)
     if (shell->exit_code == 130)
         return;
 	if (cmd_list && cmd_list->next == NULL
-        && is_parent_builtin(cmd_list->argv[0]))
+        && cmd_list->argv && is_parent_builtin(cmd_list->argv[0]))
 	    {
             shell->exit_code = exec_builtin_in_parent(cmd_list, shell);
             return;

@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:50:47 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/08/05 14:26:41 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:59:56 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,11 @@ char *handle_dollar(char *input, int *i, t_shell *shell)
 		var_value = ft_itoa(shell->exit_code);
 		*i += 2;
 		return (var_value);
+	}
+	if (!input[*i + 1] || !(ft_isalnum((unsigned char)input[*i + 1]) || input[*i + 1] == '_'))
+	{
+		(*i)++;
+		return (ft_strdup("$"));
 	}
 	var_name = extract_var_name(&input[*i + 1], &var_len);
 	var_value = get_var_value(var_name, shell);

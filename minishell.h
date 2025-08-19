@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/18 16:44:46 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:50:11 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <signal.h>
+# include  <errno.h>
 # include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>

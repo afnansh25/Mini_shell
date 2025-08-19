@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 15:41:45 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/10 19:03:04 by maram            ###   ########.fr       */
+/*   Updated: 2025/08/18 17:54:16 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,17 @@ void	free_cmd_list(t_cmd *cmd_list)
 
 void error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code)
 {
-    perror(msg);
+    if (exit_code == 127)
+    {
+        ft_putstr_fd("minishell: ", 2);
+        ft_putstr_fd(msg, 2);
+        if (errno == ENOENT)
+            ft_putendl_fd(": No such file or directory", 2);
+        else
+            ft_putendl_fd(": command not found", 2);
+    }
+    else
+        perror(msg);
     free_exec_data(exec);
     free_cmd_list(cmd_list);
     exit(exit_code);
