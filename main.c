@@ -6,87 +6,90 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:29:10 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/18 16:45:14 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/23 16:30:44 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 
-char	**dup_envp(char **src)
-{
-	int		n;
-	int		i;
-	char	**dst;
+// char	**dup_envp(char **src)
+// {
+// 	int		n;
+// 	int		i;
+// 	char	**dst;
 
-	n = 0;
-	while (src[n])
-		n++;
-	dst = (char **)malloc(sizeof(char *) * (n + 1));
-	if (!dst)
-		return (NULL);
-	i = 0;
-	while (i < n)
-	{
-		dst[i] = ft_strdup(src[i]);
-		if (!dst[i])
-			return (NULL); // simple version; we can add cleanup later
-		i++;
-	}
-	dst[n] = NULL;
-	return (dst);
-}
-
+// 	n = 0;
+// 	while (src[n])
+// 		n++;
+// 	dst = (char **)malloc(sizeof(char *) * (n + 1));
+// 	if (!dst)
+// 		return (NULL);
+// 	i = 0;
+// 	while (i < n)
+// 	{
+// 		dst[i] = ft_strdup(src[i]);
+// 		if (!dst[i])
+// 			return (NULL); // simple version; we can add cleanup later
+// 		i++;
+// 	}
+// 	dst[n] = NULL;
+// 	return (dst);
+// }
 int main(int ac, char **av, char **envp)
 {
-    char 	*line;
-    t_shell	shell;
-    t_token	*token_list;
-	t_cmd	*cmd_list;
+    char    *line;
+    t_shell shell;
+    t_token *token_list;
+    t_cmd   *cmd_list;
+
     (void)av;
-    
     if (ac > 1)
     {
         printf("You Should Write ./minishell ");
-        return(0);
+        return (0);
+    }
+
+    shell.envp = dup_envp(envp);                    // make a private copy
+    if (!shell.envp)
+    {
+        ft_putstr_fd("minishell: failed to duplicate environment\n", 2);
+        return (1);
     }
     shell.exit_code = 0;
-	shell.exp = NULL;
-	shell.envp = dup_envp(envp);
-	if (!shell.envp)
-		return (1);
-    while(1)
+    shell.exp = NULL;                               // your expander state (if any)
+
+    while (1)
     {
-        setup_signals(); 
+        setup_signals();
         line = readline("pink_bow🎀$ ");
-        if (!line)
+        if (!line)                                  // Ctrl-D / EOF
         {
             printf("exit\n");
-            break; 
+            break;
         }
-        if (*line)
+        if (*line)                                  // non-empty line
         {
-			token_list = NULL;
-			cmd_list = NULL;
-			tokens(line, &token_list); //  CALL THE LEXER HERE
-			if (token_list)
-			{
-				//print_tokens(token_list);  // optional: debug print function
-				set_token_types(token_list);
-				expand_token_list(token_list, &shell);
-				//debug_print_tokens(token_list);
-				cmd_list = parse_pipeline(token_list);
-				// if (!cmd_list)
-				// 	printf("❌ parse_pipeline returned NULL!\n");
-				// else
-				// 	print_cmd_list(cmd_list);
-				execute_pipeline(cmd_list, &shell);
-				free_cmd_list(cmd_list);         // free everything safely
-				free_tokens(token_list);      // free token list
-			}
-		}
-        add_history(line);
+            add_history(line);
+
+            token_list = NULL;
+            cmd_list = NULL;
+
+            tokens(line, &token_list);              // LEXER
+            set_token_types(token_list);            // classify tokens
+            expand_token_list(token_list, &shell);  // expand $VAR, ~, etc.
+            remove_empty_tokens(&token_list);
+            if (token_list)
+                set_token_types(token_list);
+            cmd_list = parse_pipeline(token_list);  // PARSER
+            execute_pipeline(cmd_list, &shell);     // EXECUTOR (pass shell.envp to execve)
+
+            free_cmd_list(cmd_list);
+            free_tokens(token_list);
+        }
         free(line);
     }
+
+    free_envp(shell.envp);                          // free your private env
     return (0);
 }

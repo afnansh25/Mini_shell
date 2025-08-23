@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 15:41:45 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/23 15:05:06 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/23 16:33:46 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,60 +77,24 @@ void	free_cmd_list(t_cmd *cmd_list)
 	}
 }
 
-// void error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code)
-// {
-//     // Special handling for variable expansion errors
-//     if (msg && msg[0] == '$' && exec && exec->shell)
-//     {
-//         char *var_name = msg + 1;
-//         char *var_value = get_var_value(var_name, exec->shell);
-        
-//         if (var_value && *var_value)
-//         {
-//             ft_putstr_fd("minishell: ", 2);
-//             ft_putstr_fd(var_value, 2);  // Show the VALUE (e.g. "maram")
-//             ft_putstr_fd(": command not found\n", 2);
-//             free(var_value);
-//         }
-//         else if (!var_value)
-//         {
-//             ft_putstr_fd("minishell: ", 2);
-//             ft_putstr_fd(msg, 2);
-//             ft_putstr_fd(": unbound variable\n", 2);
-//         }
-//         else  // var_value exists but is empty
-//         {
-//             ft_putstr_fd("minishell: ", 2);
-//             ft_putstr_fd(msg, 2);
-//             ft_putstr_fd(": command not found\n", 2);
-//         }
-//     }
-//     else
-//     {
-//         perror(msg);
-//     }
-
-//     free_exec_data(exec);
-//     free_cmd_list(cmd_list);
-//     exit(exit_code);
-// }
-
 void error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code)
 {
+	ft_putstr_fd("minishell: ", 2);
     if (exit_code == 127)
     {
-        ft_putstr_fd("minishell: ", 2);
         ft_putstr_fd(msg, 2);
         if (errno == ENOENT && ft_strchr(msg, '/'))
             ft_putendl_fd(": No such file or directory", 2);
         else
             ft_putendl_fd(": command not found", 2);
     }
-    else
-	{
-        ft_putstr_fd("minishell: ", 2);
-        perror(msg);
+	else if (exit_code == 126 && errno == EISDIR)
+    {
+        ft_putstr_fd(msg, 2);
+        ft_putendl_fd(": is a directory", 2);
     }
+    else
+        perror(msg);
     free_exec_data(exec);
     free_cmd_list(cmd_list);
     exit(exit_code);

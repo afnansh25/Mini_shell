@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/18 17:50:11 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/23 16:54:16 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <signal.h>
-# include  <errno.h>
+# include <errno.h>
+# include <sys/stat.h>
 # include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -152,6 +153,7 @@ char    *get_var_value(char *var_name, t_shell *shell);
 //expan_utils
 char *append_str(char *str, char *suffix);
 char *append_char(char *str, char c);
+void    remove_empty_tokens(t_token **head);
 
 //handle signales
 void    rl_replace_line(const char *text, int clear_undo);
@@ -211,9 +213,14 @@ int exec_pwd(char **av);
 int exec_env(char **av, t_shell *shell);
 
 //bultin_cd
+int  env_count(char **env);
+char    **dup_envp(char **src);
+void    free_envp(char **env);
 int exec_cd(char **av, t_shell *shell);
 char *get_env_value(char *name, t_shell *shell);
 void update_env_var(char *name, char *value, t_shell *shell);
+int	exec_cd(char **av, t_shell *shell);
+//char    *compute_logical_pwd(char **av, t_shell *shell, char *alloc);
 
 //parnet_buitlin
 //exit
