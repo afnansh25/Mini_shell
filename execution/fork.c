@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fork.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 15:30:31 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/11 17:50:09 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/08/23 15:06:13 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,11 +94,13 @@ void    run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i)
     setup_io(cmd, exec, i);
     close_pipe_files_child(exec, cmd);
     /* Handle empty command (including "") */
-       if (!cmd->argv || !cmd->argv[0])//--
-    {
-        ft_putstr_fd("minishell: : command not found\n", 2);
-        exit(127);
-    }
+    //    if (!cmd->argv || !cmd->argv[0])//--
+    // {
+    //     ft_putstr_fd("minishell: : command not found\n", 2);
+    //     exit(127);
+    // }
+    if (!cmd->argv || !cmd->argv[0])
+        exit(0);
         /* Check if command is all whitespace */
     while (cmd->argv[0][j]) //---
     {

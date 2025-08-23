@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 15:41:45 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/18 17:54:16 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/23 15:05:06 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,13 +121,16 @@ void error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code)
     {
         ft_putstr_fd("minishell: ", 2);
         ft_putstr_fd(msg, 2);
-        if (errno == ENOENT)
+        if (errno == ENOENT && ft_strchr(msg, '/'))
             ft_putendl_fd(": No such file or directory", 2);
         else
             ft_putendl_fd(": command not found", 2);
     }
     else
+	{
+        ft_putstr_fd("minishell: ", 2);
         perror(msg);
+    }
     free_exec_data(exec);
     free_cmd_list(cmd_list);
     exit(exit_code);

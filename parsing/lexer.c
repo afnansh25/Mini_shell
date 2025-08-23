@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 17:27:35 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/09 19:16:06 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/08/23 15:00:17 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,12 @@ void	tokens(char *line, t_token **head)
                         || line[last] == '>'))
         {
             print_syntax_error(line, last);
+            free_tokens(*head);
+            *head = NULL;
+        }
+		else if ((*head)->type == PIPE)
+        {
+            ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
             free_tokens(*head);
             *head = NULL;
         }

@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 14:28:33 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/18 17:58:48 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/23 15:07:09 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,28 +101,30 @@ char	*get_cmd_path(char *cmd, t_shell *shell, t_exec *exec, t_cmd *cmd_list)
 	if (!cmd || !cmd[0])
 		return (NULL);
 		
-	if (ft_strchr(cmd, '/'))
-	{
-		if (access(cmd, X_OK) == 0)
-			return (ft_strdup(cmd));
-		else
-			error_exit(cmd, exec, cmd_list, 126); // not executable
-	}
-	path_str = find_path_variable(shell);
-	if (!path_str)
-	{
-		errno = ENOENT;
-		error_exit(cmd, exec, cmd_list, 127); // PATH not found
-	}
-	paths = ft_split(path_str, ':');
-	if (!paths)
-		error_exit("malloc", exec, cmd_list, 1);
-	full_path = build_cmd_path(paths, cmd);
-	free_arr(paths);
-	if (!full_path)
-	{
-		errno = ENOENT;
-		error_exit(cmd, exec, cmd_list, 127); // command not found
-	}
-	return (full_path);
+		if (ft_strchr(cmd, '/'))
+        {
+                if (access(cmd, X_OK) == 0)
+                        return (ft_strdup(cmd));
+                else if (errno == ENOENT)
+                        error_exit(cmd, exec, cmd_list, 127);
+                else
+                        error_exit(cmd, exec, cmd_list, 126); // not executable
+        }
+        path_str = find_path_variable(shell);
+        if (!path_str)
+        {
+                errno = 0;
+                error_exit(cmd, exec, cmd_list, 127); // PATH not found
+        }
+        paths = ft_split(path_str, ':');
+        if (!paths)
+                error_exit("malloc", exec, cmd_list, 1);
+        full_path = build_cmd_path(paths, cmd);
+        free_arr(paths);
+        if (!full_path)
+        {
+                errno = 0;
+                error_exit(cmd, exec, cmd_list, 127); // command not found
+        }
+        return (full_path);
 }
