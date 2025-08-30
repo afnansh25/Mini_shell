@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_extend.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 14:40:08 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/13 17:45:27 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/30 12:28:18 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,14 +79,12 @@ void sort_env_ptrs(char **a)
 		}
 	}
 }
-
-static char	**join_env_and_exp(char **envp, char **exp)
+char	**join_env_and_exp(char **envp, char **exp)
 {
+	char	**copy;
 	int		n;
 	int		m;
 	int		i;
-	int		j;
-	char	**copy;
 
 	n = 0;
 	while (envp && envp[n])
@@ -97,51 +95,51 @@ static char	**join_env_and_exp(char **envp, char **exp)
 	copy = (char **)malloc(sizeof(char *) * (n + m + 1));
 	if (!copy)
 		return (NULL);
-	i = 0;
-	while (i < n)
-	{
+	i = -1;
+	while (++i < n)
 		copy[i] = envp[i];
-		i++;
-	}
-	j = 0;
-	while (j < m)
-	{
-		copy[i + j] = exp[j];
-		j++;
-	}
+	i = -1;
+	while (++i < m)
+		copy[n + i] = exp[i];
 	copy[n + m] = NULL;
 	return (copy);
 }
 
-void	export_print(char **envp, char **exp)
-{
-	int		i;
-	int		j;
-	char	**copy;
-	char	*e;
+/* prints: declare -x KEY[="escaped value"] */
 
-	copy = join_env_and_exp(envp, exp);
-	if (!copy)
-		return ;
-	sort_env_ptrs(copy);
-	i = 0;
-	while (copy[i])
+//new
+void	print_decl(char *e)
+{
+	int	j;
+
+	ft_putstr_fd("declare -x ", 1);
+	j = 0;
+	while (e[j] && e[j] != '=')
+		ft_putchar_fd(e[j++], 1);
+	if (e[j] == '=')
 	{
-		e = copy[i];
-		ft_putstr_fd("declare -x ", 1);
-		j = 0;
-		while (e[j] && e[j] != '=')
-			ft_putchar_fd(e[j++], 1);
-		if (e[j] == '=')
-		{
-			ft_putstr_fd("=\"", 1);
-			print_escaped_value_fd(1, e + j + 1);
-			ft_putendl_fd("\"", 1);
-		}
-		else
-			ft_putchar_fd('\n', 1);
-		i++;
+		ft_putstr_fd("=\"", 1);
+		print_escaped_value_fd(1, e + j + 1);
+		ft_putendl_fd("\"", 1);
 	}
-	free(copy);
+	else
+		ft_putchar_fd('\n', 1);
 }
 
+// void	export_print(char **envp, char **exp)
+// {
+// 	char	**copy;
+// 	int		i;
+
+// 	copy = join_env_and_exp(envp, exp);
+// 	if (!copy)
+// 		return ;
+// 	sort_env_ptrs(copy);
+// 	i = 0;
+// 	while (copy[i])
+// 	{
+// 		print_decl(copy[i]);
+// 		i++;
+// 	}
+// 	free(copy);
+// }

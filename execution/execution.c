@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:51:20 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/08/18 17:02:18 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/30 13:28:10 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,14 @@ int is_child_builtin(char *cmd)
     if(ft_strncmp(cmd, "pwd", 4) == 0)
         return (1);
     if(ft_strncmp(cmd, "env", 4) == 0)
+        return (1);
+    if(ft_strncmp(cmd, "export", 7) == 0)
+        return (1);
+    if(ft_strncmp(cmd, "cd", 3) == 0)
+        return (1);
+    if(ft_strncmp(cmd, "unset", 6) == 0)
+        return (1);
+    if(ft_strncmp(cmd, "exit", 5) == 0)
         return (1);
     return(0);
 }
@@ -60,6 +68,14 @@ int exec_builtin_in_child(t_cmd *cmd, t_shell *shell)
         return (exec_pwd(cmd->argv));
     if (ft_strncmp(cmd->argv[0], "env", 4) == 0)
         return (exec_env(cmd->argv, shell));
+    if (ft_strncmp(cmd->argv[0], "export", 7) == 0)
+        return (exec_export(cmd->argv, shell));
+    if (ft_strncmp(cmd->argv[0], "cd", 3) == 0)
+        return (exec_cd(cmd->argv, shell));
+    if (ft_strncmp(cmd->argv[0], "unset", 6) == 0)
+        return (exec_unset(cmd->argv, shell));
+    if (ft_strncmp(cmd->argv[0], "exit", 5) == 0)
+        return (exec_exit(cmd->argv, shell, 0));
     return (0);
 }
 

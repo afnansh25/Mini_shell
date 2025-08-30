@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 11:25:15 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/02 17:40:32 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/23 19:36:10 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,27 +54,46 @@ void	token_add_back(t_token **token, t_token *new)
 
 void	print_syntax_error(char *line, int i)
 {
-	char token[3];
+	char            token[3];
 
-	if (!line[i + 1] || line[i + 1] == '\0')
-		ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
+	if (!line[i + 1] || line[i + 1] == '\0'
+			|| (line[i] == '<' && line[i + 1] == '>'
+					&& (!line[i + 2] || line[i + 2] == '\0'))
+			|| (line[i] == '<' && line[i + 1] == '<'
+					&& line[i + 2] == '<'
+					&& (!line[i + 3] || line[i + 3] == '\0'))
+			|| (line[i] == '>' && line[i + 1] == '>'
+					&& line[i + 2] == '>'
+					&& (!line[i + 3] || line[i + 3] == '\0')))
+	{
+			ft_putstr_fd(
+					"minishell: syntax error near unexpected token `newline'\n",
+					2);
+			return ;
+	}
+	if ((line[i] == '|' && line[i + 1] == '|')
+			|| (line[i] == '<' && line[i + 1] == '<'
+					&& line[i + 2] == '<')
+			|| (line[i] == '>' && line[i + 1] == '>'
+					&& line[i + 2] == '>'))
+	{
+			token[0] = line[i];
+			token[1] = '\0';
+	}
 	else if (line[i + 1] == line[i])
 	{
-		token[0] = line[i];
-		token[1] = line[i];
-		token[2] = '\0';
+			token[0] = line[i];
+			token[1] = line[i];
+			token[2] = '\0';
 	}
 	else
 	{
-		token[0] = line[i + 1];
-		token[1] = '\0';
+			token[0] = line[i + 1];
+			token[1] = '\0';
 	}
-	if (line[i + 1] != '\0')
-	{
-		ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
-		ft_putstr_fd(token, 2);
-		ft_putstr_fd("'\n", 2);
-	}
+	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+	ft_putstr_fd(token, 2);
+	ft_putstr_fd("'\n", 2);
 }
 
 int	is_invalid_sequence(char *line, int i)

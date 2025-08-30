@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 12:28:23 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/18 17:38:07 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/30 13:40:16 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ long long	ft_atoll(const char *s)
 	return (n * sign);
 }
 
-static unsigned char	normalize_exit_code(long long n)
+unsigned char	normalize_exit_code(long long n)
 {
 	n %= 256;
 	if (n < 0)
@@ -89,9 +89,13 @@ int	exec_exit(char **argv, t_shell *shell, int interactive)
 		return (1);
 	}
 	if (argc == 1)
+	{
+		cleanup_on_exit(shell, NULL, NULL);
 		exit(shell->exit_code);
+	}
 	n = ft_atoll(argv[1]);
 	status = normalize_exit_code(n);
+	cleanup_on_exit(shell, NULL, NULL);
 	exit(status);
 }
 

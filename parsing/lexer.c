@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 17:27:35 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/23 15:00:17 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/23 19:15:21 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ int	handle_token(t_token **head, char *line, int *i)
 	return (1);
 }
 
-void	tokens(char *line, t_token **head)
+void    tokens(char *line, t_token **head, t_shell *shell)
 {
 	int	i;
 	int last;
@@ -116,6 +116,7 @@ void	tokens(char *line, t_token **head)
         {
             print_syntax_error(line, i);
             *head = NULL;
+			shell->exit_code = 258;
             return ;
         }
         if (!handle_token(head, line, &i))
@@ -132,12 +133,14 @@ void	tokens(char *line, t_token **head)
             print_syntax_error(line, last);
             free_tokens(*head);
             *head = NULL;
+			shell->exit_code = 258;
         }
 		else if ((*head)->type == PIPE)
         {
             ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
             free_tokens(*head);
             *head = NULL;
+			shell->exit_code = 258;
         }
     }
 }

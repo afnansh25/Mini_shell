@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/23 16:54:16 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/30 13:44:54 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,8 +104,8 @@ typedef struct s_exec
 
 //parsing part
 //lexer
-int	handle_token(t_token **head, char *line, int *i);
-void	tokens(char *line, t_token **head);
+int     handle_token(t_token **head, char *line, int *i);
+void    tokens(char *line, t_token **head, t_shell *shell);
 char *rmv_quotes(const char *s);
 char *get_word(char *line, int i, int *len, t_quote_type *quote);
 t_token_type	get_token_type(char c, char next, int *len);
@@ -168,16 +168,18 @@ void    debug_print_tokens(t_token *tok); //debug
 void	free_tokens(t_token *token);
 void	*free_arr(char **arr);
 void	free_cmd_list(t_cmd *cmd_list);
+void	cleanup_on_exit(t_shell *sh, t_cmd *cmd, t_exec *ex);
 
 //execution part
 //execution
 void execute_pipeline(t_cmd *cmd_list, t_shell *shell);
-int exec_builtin_in_child(t_cmd *cmd, t_shell *shell);
+int exec_builtin_in_ld(t_cmd *cmd, t_shell *shell);
 int exec_builtin_in_parent(t_cmd *cmd, t_shell *shell);
 int is_parent_builtin(char *cmd);
 int is_child_builtin(char *cmd);
 int count_cmds(t_cmd *cmd);
 void wait_all_children(t_exec *exec, t_shell *shell);
+int exec_builtin_in_child(t_cmd *cmd, t_shell *shell);
 
 //heredoc
 void handle_all_heredocs(t_cmd *cmd_list, t_shell *shell);
@@ -207,32 +209,34 @@ void error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code);
 void	free_cmd_list(t_cmd *cmd_list);
 void	free_exec_data(t_exec *exec);
 
-//bultin_child
+//----------------------------------BULTIN----------------------------------------------------
+
+// -------CHILD-------
+//echo
 int exec_echo(char **av);
+
+//pwd
 int exec_pwd(char **av);
+
+// env
 int exec_env(char **av, t_shell *shell);
-
-//bultin_cd
-int  env_count(char **env);
-char    **dup_envp(char **src);
-void    free_envp(char **env);
-int exec_cd(char **av, t_shell *shell);
 char *get_env_value(char *name, t_shell *shell);
-void update_env_var(char *name, char *value, t_shell *shell);
-int	exec_cd(char **av, t_shell *shell);
-//char    *compute_logical_pwd(char **av, t_shell *shell, char *alloc);
+int  env_count(char **env);
+void    free_envp(char **env);
 
-//parnet_buitlin
-//exit
-int         exec_exit(char **argv, t_shell *shell, int interactive);
+//------PARENT------------
+// exit
+int is_numeric_str(char *s);
 long long	ft_atoll(const char *s);
-int         is_numeric_str(char *s);
+unsigned char	normalize_exit_code(long long n);
+int	exec_exit(char **argv, t_shell *shell, int interactive);
 
-//unset
-int is_valid_identifier(char *s);
+// unset
+int	is_valid_identifier(char *s);
 int env_index_of(char **envp, char *name);
-int env_index_of(char **envp, char *name);
-int exec_unset(char **argv, t_shell *shell);
+void    env_remove_at(char **envp, int idx);
+void	print_unset_invalid(char *name, int *had_error);
+int	exec_unset(char **argv, t_shell *shell);
 
 //export
 int parse_export_arg(char *arg, char **name, char **value, int *has_eq);
@@ -240,12 +244,28 @@ char *make_env_pair(char *name, char *value);
 int env_set(char ***penvp, char *name, char *value);
 int export_one(t_shell *shell, char *arg);
 int	exec_export(char **argv, t_shell *shell);
-
-void    export_print(char **envp, char **exp);
-void	print_escaped_value_fd(int fd, const char *s);
-void   export_remove(char ***pexp, char *name);
-int   export_add(char ***pexp, char *name);
 int   export_index_of(char **exp, char *name);
+int   export_add(char ***pexp, char *name);
+void   export_remove(char ***pexp, char *name);
+void    print_escaped_value_fd(int fd, const char *s);
+int cmp_env_names(char *a, char *b);
+void sort_env_ptrs(char **a);
+char	**join_env_and_exp(char **envp, char **exp);
+void	export_print(char **envp, char **exp);
+//cd
+int	exec_cd(char **av, t_shell *shell);
+void	set_logical_pwd(char **av, char *target_dir, char *newpwd, t_shell *shell);
+char	*resolve_target(char **av, t_shell *shell, int *print_newpwd, char **alloc);
+int	cd_home_case(char **av);
+char	*expand_tilde(char *arg, t_shell *shell, char **alloc);
+char	*build_entry(char *name, char *value);
+int	find_key(char **envp, char *name);
+char	**append_env(char **envp, char *entry); //0
+void	update_env_var(char *name, char *value, t_shell *shell);
+void	cd_perror(char *path);
 
+
+void	print_decl(char *e);
+// ------------------------------------------------------------------------------------------------------
 
 #endif

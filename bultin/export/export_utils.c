@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 14:39:59 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/13 17:40:28 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/29 17:52:44 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,7 @@ int   export_add(char ***pexp, char *name)
         newv[i] = (*pexp)[i];
     newv[n] = ft_strdup(name);
     if (!newv[n])
-    {
-        free(newv);
-        return (1);
-    }
+        return (free(newv), 1);
     newv[n + 1] = NULL;
     free(*pexp);
     *pexp = newv;
@@ -77,4 +74,45 @@ void   export_remove(char ***pexp, char *name)
         (*pexp)[i] = (*pexp)[i + 1];
         i++;
     }
+}
+
+void	export_print(char **envp, char **exp)
+{
+	char	**copy;
+	int		i;
+
+	copy = join_env_and_exp(envp, exp);
+	if (!copy)
+		return ;
+	sort_env_ptrs(copy);
+	i = 0;
+	while (copy[i])
+	{
+		print_decl(copy[i]);
+		i++;
+	}
+	free(copy);
+}
+
+int	exec_export(char **argv, t_shell *shell)
+{
+	int	i;
+	int	had_error;
+
+	had_error = 0;
+	i = 1;
+	if (argv[1] == NULL)
+	{
+		export_print(shell->envp, shell->exp);
+		return (0);
+	}
+	while (argv[i]) 
+	{
+		if (export_one(shell, argv[i]))
+			had_error = 1;
+		i++;
+	}
+	if (had_error)
+		return (1);
+	return (0);
 }

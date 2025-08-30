@@ -114,3 +114,17 @@ void	*free_arr(char **arr)
 // 		cmd_list = tmp;
 //     }
 // }
+
+void	cleanup_on_exit(t_shell *sh, t_cmd *cmd, t_exec *ex)
+{
+	if (ex)
+		free_exec_data(ex);
+	if (cmd)
+		free_cmd_list(cmd);
+	if (sh && sh->envp)
+	{
+		free_envp(sh->envp);
+		sh->envp = NULL;
+	}
+	rl_clear_history();
+}

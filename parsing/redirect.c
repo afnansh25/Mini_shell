@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 17:44:19 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/23 14:56:34 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/23 19:08:11 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,5 +99,11 @@ void    handle_redirection(t_cmd *cmd, t_token **token_ptr)
             handle_heredoc(cmd, token_ptr);
         else
             break ;
+        if (cmd->redir_error)
+            break ;
     }
+    if (cmd->redir_error)
+        while (*token_ptr && (*token_ptr)->type != PIPE)
+            *token_ptr = (*token_ptr)->next;   
 }
+
