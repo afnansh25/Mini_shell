@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:50:47 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/08/23 16:32:25 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/31 12:09:48 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,9 +111,10 @@ void expand_token_list(t_token *token, t_shell *shell)
         {
             if (token->type == CMD || token->type == ARG ||
                 token->type == REDIR_IN || token->type == REDIR_OUT ||
-                token->type == REDIR_APPEND || token->type == HEREDOC)
-            {
-                expanded = expand_variables(token->value, shell);
+                token->type == REDIR_APPEND || token->type == HEREDOC ||
+                token->type == WORD)
+            { 
+				expanded = expand_variables(token->value, shell);
                 free(token->value);
                 token->value = expanded;
             }

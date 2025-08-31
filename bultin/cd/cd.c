@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 13:54:17 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/08/25 18:04:16 by maram            ###   ########.fr       */
+/*   Updated: 2025/08/31 12:06:25 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,13 +105,13 @@ int	exec_cd(char **av, t_shell *shell)
 		return (free(oldpwd), 1);
 	if (chdir(target_dir) != 0)
 		return (cd_perror(target_dir), free(oldpwd), free(alloc), 1);
-	newpwd = getcwd(NULL, 0);
-	if (!newpwd)
-		return (update_env_var("OLDPWD", oldpwd, shell),
-			perror("minishell: cd: getcwd"), free(oldpwd), free(alloc), 1);
-	update_env_var("OLDPWD", oldpwd, shell);
-	set_logical_pwd(av, target_dir, newpwd, shell);
-	if (print_newpwd)
-		printf("%s\n", newpwd);
+    newpwd = getcwd(NULL, 0);
+    if (!newpwd)
+        return (update_env_var("OLDPWD", oldpwd, shell),
+            perror("minishell: cd: getcwd"), free(oldpwd), free(alloc), 1);
+    set_logical_pwd(av, target_dir, newpwd, shell);
+    update_env_var("OLDPWD", oldpwd, shell);
+    if (print_newpwd)
+        printf("%s\n", newpwd);
 	return (free(oldpwd), free(newpwd), free(alloc), 0);
 }

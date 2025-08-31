@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 14:27:52 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/31 11:32:47 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/31 11:58:55 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ int	handle_here_doc(t_heredoc *hdoc, t_shell *shell, t_cmd *cmd_list)
 		close(pipe_fd[1]);
 		waitpid(pid, &status, 0);
 		if ((WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-				|| (WIFEXITED(status) && WEXITSTATUS(status) == 130))
+			|| (WIFEXITED(status) && WEXITSTATUS(status) == 1))
 		{
 				close(pipe_fd[0]);
 				return (-1); // signal parent to cancel pipeline
@@ -123,7 +123,7 @@ while (i < cmd->n_heredocs)
 fd = handle_here_doc(&cmd->heredocs[i], shell, cmd);
 if (fd == -1)
 {
-	shell->exit_code = 130;
+	shell->exit_code = 1;
 	return (1);
 }
 if (cmd->infile != -1)

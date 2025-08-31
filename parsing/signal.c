@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:19 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/05 15:18:08 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/31 11:59:11 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,5 @@ void	sigint_heredoc_handler(int sig)
 {
 	(void)sig;
 	write(1, "\n", 1);
-	exit(130);
+	exit(1);
 }

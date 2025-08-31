@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 17:27:35 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/30 17:24:32 by maram            ###   ########.fr       */
+/*   Updated: 2025/08/31 12:07:28 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,6 +187,19 @@ void    tokens(char *line, t_token **head, t_shell *shell)
         {
             i++;
             continue;
+        }
+		if (line[i] == ';')
+        {
+            ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+            if (line[i + 1] == ';')
+                ft_putstr_fd(";;", 2);
+            else
+                ft_putstr_fd(";", 2);
+            ft_putstr_fd("'\n", 2);
+            shell->exit_code = 2;
+            free_tokens(*head);
+            *head = NULL;
+            return;
         }
         if (!handle_token(head, line, &i))
             return ;

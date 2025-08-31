@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:29:10 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/30 17:25:24 by maram            ###   ########.fr       */
+/*   Updated: 2025/08/31 12:13:15 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ int main(int ac, char **av, char **envp)
         ft_putstr_fd("minishell: failed to duplicate environment\n", 2);
         return (1);
     }
+    init_shlvl(&shell.envp);
     shell.exit_code = 0;
     shell.exp = NULL;                               // your expander state (if any)
 
@@ -119,7 +120,11 @@ int main(int ac, char **av, char **envp)
                 }
                 set_token_types(token_list);            // classify tokens
                 expand_token_list(token_list, &shell);  // expand $VAR, ~, etc.
-                remove_empty_tokens(&token_list);
+                if (remove_empty_tokens(&token_list, &shell))
+                {
+                    free_tokens(token_list);
+                    continue;
+                }
                 if (token_list)
                 {
                     set_token_types(token_list);

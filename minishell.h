@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/31 11:34:07 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/31 12:13:32 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ char    *get_var_value(char *var_name, t_shell *shell);
 //expan_utils
 char *append_str(char *str, char *suffix);
 char *append_char(char *str, char c);
-void    remove_empty_tokens(t_token **head);
+int     remove_empty_tokens(t_token **head, t_shell *shell);
 
 //handle signales
 void    rl_replace_line(const char *text, int clear_undo);
@@ -224,6 +224,7 @@ int exec_env(char **av, t_shell *shell);
 char *get_env_value(char *name, t_shell *shell);
 int  env_count(char **env);
 void    free_envp(char **env);
+void    init_shlvl(char ***penvp);
 
 //------PARENT------------
 // exit
