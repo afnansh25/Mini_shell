@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 13:54:17 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/08/31 12:06:25 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/31 13:10:11 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,6 @@ int	exec_cd(char **av, t_shell *shell)
     set_logical_pwd(av, target_dir, newpwd, shell);
     update_env_var("OLDPWD", oldpwd, shell);
     if (print_newpwd)
-        printf("%s\n", newpwd);
+        {printf("%s\n", newpwd);}
 	return (free(oldpwd), free(newpwd), free(alloc), 0);
 }

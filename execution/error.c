@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 15:41:45 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/23 16:33:46 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/31 13:30:39 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,20 @@ void	free_cmd_list(t_cmd *cmd_list)
 	}
 }
 
+void exit_child(t_exec *exec, t_cmd *cmd_list, int exit_code)
+{
+    t_cmd *head;
+
+    head = cmd_list;
+    if (!head && exec)
+        head = exec->cmd_head;
+    if (exec && exec->shell)
+        free_envp(exec->shell->envp);
+    free_cmd_list(head);
+    free_exec_data(exec);
+    exit(exit_code);
+}
+
 void error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code)
 {
 	ft_putstr_fd("minishell: ", 2);
@@ -94,8 +108,6 @@ void error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code)
         ft_putendl_fd(": is a directory", 2);
     }
     else
-        perror(msg);
-    free_exec_data(exec);
-    free_cmd_list(cmd_list);
-    exit(exit_code);
+        {perror(msg);}
+	exit_child(exec, cmd_list, exit_code);
 }

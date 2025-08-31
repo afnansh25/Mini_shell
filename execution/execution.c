@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:51:20 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/08/31 11:35:10 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/31 13:09:41 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,9 +119,9 @@ void execute_pipeline(t_cmd *cmd_list, t_shell *shell)
 	t_exec  *exec;
 
     if (!cmd_list)
-        return;
+        {return;}
     if (handle_all_heredocs(cmd_list, shell))
-        return;
+        {return;}
 	if (cmd_list && cmd_list->next == NULL
         && cmd_list->argv && is_parent_builtin(cmd_list->argv[0]))
 	{

@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/31 12:13:32 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/31 13:30:00 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,6 +209,7 @@ void xdup2(int oldfd, int newfd, t_exec *exec);
 void error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code);
 void	free_cmd_list(t_cmd *cmd_list);
 void	free_exec_data(t_exec *exec);
+void exit_child(t_exec *exec, t_cmd *cmd_list, int exit_code);
 
 //----------------------------------BULTIN----------------------------------------------------
 

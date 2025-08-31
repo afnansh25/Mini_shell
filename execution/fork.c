@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 15:30:31 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/23 15:06:13 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/31 13:28:48 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,16 @@ void    close_pipe_files_child(t_exec *exec, t_cmd *cmd)
     j = 0;
     while (j < exec->cmd_count - 1)
     {
-        close(exec->pipes[j][0]);
-        close(exec->pipes[j][1]);
+        if (exec->pipes[j][0] != -1)
+        {
+            close(exec->pipes[j][0]);
+            exec->pipes[j][0] = -1;
+        }
+        if (exec->pipes[j][1] != -1)
+        {
+            close(exec->pipes[j][1]);
+            exec->pipes[j][1] = -1;
+        }
         j++;
     }
     if(cmd->infile != -1)
@@ -88,7 +96,7 @@ void    run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i)
     int     j = 0; //---
 
     if (cmd->redir_error)
-        exit(1);
+        exit_child(exec, exec->cmd_head, 1);
     signal(SIGINT, SIG_DFL);
     signal(SIGQUIT, SIG_DFL);
     setup_io(cmd, exec, i);
@@ -116,7 +124,7 @@ void    run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i)
         ft_putstr_fd("minishell: ", 2);
         ft_putstr_fd(cmd->argv[0], 2);
         ft_putstr_fd(": command not found\n", 2);
-        exit(127);
+        exit_child(exec, exec->cmd_head, 127);
     }
     // Handle variable expansion as command
     if (cmd->argv[0][0] == '$')
@@ -136,10 +144,10 @@ void    run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i)
             ft_putstr_fd(cmd->argv[0], 2);
             ft_putstr_fd(": unbound variable\n", 2);
         }
-        exit(127);
+        exit_child(exec, exec->cmd_head, 127);
     }
     if(is_child_builtin(cmd->argv[0]))
-        exit(exec_builtin_in_child(cmd, shell));
+        exit_child(exec, exec->cmd_head, exec_builtin_in_child(cmd, shell));
     path = get_cmd_path(cmd->argv[0], shell, exec, exec->cmd_head);
     if (execve(path, cmd->argv, shell->envp) == -1)
     {
@@ -156,7 +164,7 @@ void    run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i)
             exit_code = 126;
         }
         free(path);
-        exit(exit_code);
+        error_exit(cmd->argv[0], exec, exec->cmd_head, exit_code);
     }
     free(path);
 }

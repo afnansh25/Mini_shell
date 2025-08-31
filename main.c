@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:29:10 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/31 12:13:15 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/31 13:29:31 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,10 +129,11 @@ int main(int ac, char **av, char **envp)
                 {
                     set_token_types(token_list);
                     cmd_list = parse_pipeline(token_list);  // PARSER
+                    free_tokens(token_list);
+                    token_list = NULL;
                     execute_pipeline(cmd_list, &shell);     // EXECUTOR
                     free_cmd_list(cmd_list);
                 }
-                free_tokens(token_list);
             }
         }
         free(line);
