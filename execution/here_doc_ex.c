@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc_ex.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 14:27:52 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/09 14:49:00 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/08/31 11:32:47 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,46 +101,52 @@ int	handle_here_doc(t_heredoc *hdoc, t_shell *shell, t_cmd *cmd_list)
 	{
 		close(pipe_fd[1]);
 		waitpid(pid, &status, 0);
-		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+		if ((WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+				|| (WIFEXITED(status) && WEXITSTATUS(status) == 130))
 		{
-			close(pipe_fd[0]);
-			return (-1); // signal parent to cancel pipeline
+				close(pipe_fd[0]);
+				return (-1); // signal parent to cancel pipeline
 		}
 		return (pipe_fd[0]); // return read end
-	}
-	return (-1); // fallback
+}
+return (-1); // fallback
 }
 
-void	process_all_heredocs(t_cmd *cmd, t_shell *shell)
+int	process_all_heredocs(t_cmd *cmd, t_shell *shell)
 {
-	int	i;
-	int	fd;
+int		i;
+int		fd;
 
-	i = 0;
-	while (i < cmd->n_heredocs)
-	{
-		fd = handle_here_doc(&cmd->heredocs[i], shell, cmd);
-		if (fd == -1)
-		{
-			shell->exit_code = 130;
-			return ;
-		}
-		if (cmd->infile != -1)
-			close(cmd->infile);
-		cmd->infile = fd;
-		i++;
-	}
+i = 0;
+while (i < cmd->n_heredocs)
+{
+fd = handle_here_doc(&cmd->heredocs[i], shell, cmd);
+if (fd == -1)
+{
+	shell->exit_code = 130;
+	return (1);
+}
+if (cmd->infile != -1)
+	close(cmd->infile);
+cmd->infile = fd;
+i++;
+}
+return (0);
 }
 
-void handle_all_heredocs(t_cmd *cmd_list, t_shell *shell)
+int handle_all_heredocs(t_cmd *cmd_list, t_shell *shell)
 {
-	t_cmd	*cmd;
-	
-	cmd = cmd_list;
-	while (cmd)
-    {
-        if (cmd->n_heredocs > 0)
-            process_all_heredocs(cmd, shell);
-        cmd = cmd->next;
-    }
+t_cmd	*cmd;
+
+cmd = cmd_list;
+while (cmd)
+{
+if (cmd->n_heredocs > 0)
+{
+	if (process_all_heredocs(cmd, shell))
+		return (1);
+}
+cmd = cmd->next;
+}
+return (0);
 }

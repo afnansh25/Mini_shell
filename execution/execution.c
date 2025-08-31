@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:51:20 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/08/23 19:12:25 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/31 11:35:10 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int exec_builtin_in_child(t_cmd *cmd, t_shell *shell)
         return (exec_pwd(cmd->argv));
     if (ft_strncmp(cmd->argv[0], "env", 4) == 0)
         return (exec_env(cmd->argv, shell));
-        if (ft_strncmp(cmd->argv[0], "export", 7) == 0)
+    if (ft_strncmp(cmd->argv[0], "export", 7) == 0)
         return (exec_export(cmd->argv, shell));
     if (ft_strncmp(cmd->argv[0], "cd", 3) == 0)
         return (exec_cd(cmd->argv, shell));
@@ -119,18 +119,20 @@ void execute_pipeline(t_cmd *cmd_list, t_shell *shell)
 	t_exec  *exec;
 
     if (!cmd_list)
-        {return;}
-	handle_all_heredocs(cmd_list, shell);
-    if (shell->exit_code == 130)
-        {return;}
+        return;
+    if (handle_all_heredocs(cmd_list, shell))
+        return;
 	if (cmd_list && cmd_list->next == NULL
         && cmd_list->argv && is_parent_builtin(cmd_list->argv[0]))
-	    {
-            shell->exit_code = exec_builtin_in_parent(cmd_list, shell);
-            return;
-        }
+	{
+        shell->exit_code = exec_builtin_in_parent(cmd_list, shell);
+        return;
+    }
+    signal(SIGINT, SIG_IGN);
+    signal(SIGQUIT, SIG_IGN);
     exec = init_exec_struct(cmd_list, shell);
     fork_and_execute_all(cmd_list, exec, shell);
     wait_all_children(exec, shell);
     free_exec_data(exec);
+    setup_signals();
 }
