@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 17:27:35 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/23 19:15:21 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/30 17:24:32 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,10 @@ t_token_type	get_token_type(char c, char next, int *len)
 	return (WORD);
 }
 
-char *get_word(char *line, int i, int *len, t_quote_type *quote)
+char	*get_word(char *line, int i, int *len, t_quote_type *quote)
 {
-	char *raw;
-	char *word;
+	char	*raw;
+	char	*word;
 
 	*quote = NO_QUOTE;
 	if (line[i] == '\'')
@@ -99,10 +99,86 @@ int	handle_token(t_token **head, char *line, int *i)
 	return (1);
 }
 
+int	validate_syntax(t_token *tokens)
+{
+	t_token	*current;
+	int		has_cmd;
+
+	if (!tokens)
+		return (0);
+	if (tokens->type == PIPE)
+	{
+		ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
+		return (0);
+	}
+	current = tokens;
+	has_cmd = 0;
+	while (current)
+	{
+		if (current->type == PIPE && current->next && current->next->type == PIPE)
+		{
+			ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
+			return (0);
+		}
+		if ((current->type == REDIR_IN || current->type == REDIR_OUT || 
+			 current->type == REDIR_APPEND || current->type == HEREDOC) && 
+			(!current->next || current->next->type != WORD))
+		{
+			if (!current->next)
+				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
+			else
+			{
+				ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+				ft_putstr_fd(current->next->value, 2);
+				ft_putstr_fd("'\n", 2);
+			}
+			return (0);
+		}
+		if ((current->type == REDIR_IN || current->type == REDIR_OUT || 
+			 current->type == REDIR_APPEND || current->type == HEREDOC) && 
+			current->next && current->next->type == PIPE)
+		{
+			ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
+			return (0);
+		}
+		if (current->type == PIPE && current->next && 
+			(current->next->type == REDIR_IN || current->next->type == REDIR_OUT || 
+			 current->next->type == REDIR_APPEND || current->next->type == HEREDOC))
+		{
+			if (!current->next->next || current->next->next->type != WORD)
+			{
+				if (!current->next->next)
+					ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
+				else
+				{
+					ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+					ft_putstr_fd(current->next->next->value, 2);
+					ft_putstr_fd("'\n", 2);
+				}
+				return (0);
+			}
+		}
+		if (current->type == CMD || current->type == ARG)
+			has_cmd = 1;
+		current = current->next;
+	}
+	if (tokens && has_cmd)
+	{
+		current = tokens;
+		while (current->next)
+			current = current->next;
+		if (current->type == PIPE)
+		{
+			ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
+			return (0);
+		}
+	}
+	return (1);
+}
+
 void    tokens(char *line, t_token **head, t_shell *shell)
 {
 	int	i;
-	int last;
 
 	i = 0;
     while (line[i])
@@ -112,35 +188,17 @@ void    tokens(char *line, t_token **head, t_shell *shell)
             i++;
             continue;
         }
-        if (is_invalid_sequence(line, i))
-        {
-            print_syntax_error(line, i);
-            *head = NULL;
-			shell->exit_code = 258;
-            return ;
-        }
         if (!handle_token(head, line, &i))
             return ;
     }
     if (*head)
     {
-        last = ft_strlen(line) - 1;
-        while (last >= 0 && line[last] == ' ')
-            last--;
-        if (last >= 0 && (line[last] == '|' || line[last] == '<'
-                        || line[last] == '>'))
+        if (!validate_syntax(*head))
         {
-            print_syntax_error(line, last);
+            shell->exit_code = 2;
             free_tokens(*head);
             *head = NULL;
-			shell->exit_code = 258;
-        }
-		else if ((*head)->type == PIPE)
-        {
-            ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
-            free_tokens(*head);
-            *head = NULL;
-			shell->exit_code = 258;
+            return;
         }
     }
 }

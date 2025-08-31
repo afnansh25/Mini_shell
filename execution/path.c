@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 14:28:33 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/23 16:57:13 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/30 17:21:34 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,37 +52,42 @@ char	*get_cmd_path(char *cmd, t_shell *shell, t_exec *exec, t_cmd *cmd_list)
 	char	**paths;
 	char	*path_str;
 	char	*full_path;
-	struct stat     path_stat;
+	struct stat		path_stat;
 
 	if (!cmd || !cmd[0])
 		return (NULL);
-    if (ft_strchr(cmd, '/'))
-    {
-        if (stat(cmd, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
-        {
-            errno = EISDIR;
-            error_exit(cmd, exec, cmd_list, 126);
-        }
-        if (access(cmd, X_OK) == 0)
-            return (ft_strdup(cmd));
-        else
-        error_exit(cmd, exec, cmd_list, 126); // not executable
-    }
-    path_str = find_path_variable(shell);
-    if (!path_str)
-    {
-        errno = ENOENT;
-        error_exit(cmd, exec, cmd_list, 127); // PATH not found
-    }
-    paths = ft_split(path_str, ':');
-    if (!paths)
-        error_exit("malloc", exec, cmd_list, 1);
-    full_path = build_cmd_path(paths, cmd);
-    free_arr(paths);
-    if (!full_path)
-    {
-        errno = ENOENT;
-        error_exit(cmd, exec, cmd_list, 127); // command not found
-    }
-    return (full_path);
+	if (ft_strchr(cmd, '/'))
+	{
+		if (access(cmd, F_OK) != 0)
+		{
+			errno = ENOENT;
+			error_exit(cmd, exec, cmd_list, 127);
+		}
+		if (stat(cmd, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
+		{
+			errno = EISDIR;
+			error_exit(cmd, exec, cmd_list, 126);
+		}
+		if (access(cmd, X_OK) == 0)
+			return (ft_strdup(cmd));
+		else
+			error_exit(cmd, exec, cmd_list, 126);
+	}
+	path_str = find_path_variable(shell);
+	if (!path_str)
+	{
+		errno = ENOENT;
+		error_exit(cmd, exec, cmd_list, 127);
+	}
+	paths = ft_split(path_str, ':');
+	if (!paths)
+		error_exit("malloc", exec, cmd_list, 1);
+	full_path = build_cmd_path(paths, cmd);
+	free_arr(paths);
+	if (!full_path)
+	{
+		errno = ENOENT;
+		error_exit(cmd, exec, cmd_list, 127);
+	}
+	return (full_path);
 }

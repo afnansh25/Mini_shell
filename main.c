@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:29:10 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/30 13:38:24 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/30 17:25:24 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,12 @@ int main(int ac, char **av, char **envp)
             tokens(line, &token_list, &shell);              // LEXER
             if (token_list)
             {
+                if (!validate_syntax(token_list))   // SYNTAX VALIDATION (before type classification)
+                {
+                    shell.exit_code = 2;
+                    free_tokens(token_list);
+                    continue;
+                }
                 set_token_types(token_list);            // classify tokens
                 expand_token_list(token_list, &shell);  // expand $VAR, ~, etc.
                 remove_empty_tokens(&token_list);

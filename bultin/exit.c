@@ -3,35 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 12:28:23 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/30 13:40:16 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/27 08:41:09 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int is_numeric_str(char *s)
+int	is_numeric_str(char *s)
 {
-    int  i;
+	int	i;
 
-    i = 0;
-    if (!s || s[i] == '\0')
-        return (0);
-    if (s[i] == '+' || s[i] == '-')
-    {
-        i++;
-        if (s[i] == '\0')
-            return (0);
-    }
-    while (s[i])
-    {
-        if (ft_isdigit((unsigned char)s[i]) == 0)
-            return (0);
-        i++;
-    }
-    return (1);
+	i = 0;
+	if (!s || s[i] == '\0')
+		return (0);
+	if (s[i] == '+' || s[i] == '-')
+	{
+		i++;
+		if (s[i] == '\0')
+			return (0);
+	}
+	while (s[i])
+	{
+		if (ft_isdigit((unsigned char)s[i]) == 0)
+			return (0);
+		i++;
+	}
+	return (1);
 }
 long long	ft_atoll(const char *s)
 {
@@ -80,7 +80,7 @@ int	exec_exit(char **argv, t_shell *shell, int interactive)
 		ft_putstr_fd("minishell: exit: ", 2);
 		ft_putstr_fd(argv[1], 2);
 		ft_putendl_fd(": numeric argument required", 2);
-		exit(2);
+		exit(255);
 	}
 	if (argc > 2)
 	{
@@ -89,13 +89,9 @@ int	exec_exit(char **argv, t_shell *shell, int interactive)
 		return (1);
 	}
 	if (argc == 1)
-	{
-		cleanup_on_exit(shell, NULL, NULL);
 		exit(shell->exit_code);
-	}
 	n = ft_atoll(argv[1]);
 	status = normalize_exit_code(n);
-	cleanup_on_exit(shell, NULL, NULL);
 	exit(status);
 }
 

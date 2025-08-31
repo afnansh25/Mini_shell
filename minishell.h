@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/30 13:44:54 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/30 12:33:30 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,7 @@ t_token_type	get_token_type(char c, char next, int *len);
 int	is_invalid_sequence(char *line, int i);
 int scan_word_length(char *line, int i);
 void	print_syntax_error(char *line, int i);
+int	validate_syntax(t_token *tokens);
 t_token	*new_token(char *token, t_token_type type, t_quote_type quote);
 void	token_add_back(t_token **token, t_token *new);
 
@@ -140,6 +141,7 @@ void	handle_redir_in(t_cmd *cmd, t_token **token_ptr);
 t_arg *collect_args(t_token **token_ptr);
 void	handle_cmd_and_args(t_cmd *cmd, t_token **token_ptr);
 int 	add_arg(t_arg **list, char *val); // to collect args
+int	add_arg_to_cmd(t_cmd *cmd, char *val); // to add args to existing cmd
 char	**arg_list_to_array(t_arg *list); // convert to argv
 void	free_arg_list(t_arg *list);       // free if error
 
@@ -168,7 +170,6 @@ void    debug_print_tokens(t_token *tok); //debug
 void	free_tokens(t_token *token);
 void	*free_arr(char **arr);
 void	free_cmd_list(t_cmd *cmd_list);
-void	cleanup_on_exit(t_shell *sh, t_cmd *cmd, t_exec *ex);
 
 //execution part
 //execution

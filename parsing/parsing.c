@@ -51,20 +51,42 @@ void set_token_types(t_token *tokens)
 t_cmd *parse_cmd(t_token **token_ptr)
 {
 	t_cmd *cmd;
+	t_token *current;
 
 	cmd = malloc(sizeof(t_cmd));
 	if (!cmd)
 		return (NULL);
 	init_cmd(cmd);
+	
+	// First pass: collect command and initial arguments
 	handle_cmd_and_args(cmd, token_ptr);
-	while (*token_ptr && (*token_ptr)->type != PIPE)
+	
+	// Second pass: handle redirections and collect any remaining arguments
+	current = *token_ptr;
+	while (current && current->type != PIPE)
 	{
-		if ((*token_ptr)->type == REDIR_APPEND || (*token_ptr)->type == REDIR_IN
-			|| (*token_ptr)->type == REDIR_OUT || (*token_ptr)->type == HEREDOC)
-			handle_redirection(cmd, token_ptr);
+		if (current->type == REDIR_APPEND || current->type == REDIR_IN
+			|| current->type == REDIR_OUT || current->type == HEREDOC)
+		{
+			handle_redirection(cmd, &current);
+			if (cmd->redir_error)
+				break;
+		}
+		else if (current->type == ARG)
+		{
+			// Collect arguments that come after redirections
+			if (!add_arg_to_cmd(cmd, current->value))
+			{
+				// Handle memory allocation error
+				free_cmd_list(cmd);
+				return (NULL);
+			}
+			current = current->next;
+		}
 		else
-			*token_ptr = (*token_ptr)->next; // Fallback in case of unexpected token
+			current = current->next;
 	}
+	*token_ptr = current;
 	return (cmd);
 }
 

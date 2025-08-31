@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:51:20 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/08/30 13:28:10 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/23 19:12:25 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int exec_builtin_in_child(t_cmd *cmd, t_shell *shell)
         return (exec_pwd(cmd->argv));
     if (ft_strncmp(cmd->argv[0], "env", 4) == 0)
         return (exec_env(cmd->argv, shell));
-    if (ft_strncmp(cmd->argv[0], "export", 7) == 0)
+        if (ft_strncmp(cmd->argv[0], "export", 7) == 0)
         return (exec_export(cmd->argv, shell));
     if (ft_strncmp(cmd->argv[0], "cd", 3) == 0)
         return (exec_cd(cmd->argv, shell));
