@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:00:02 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/13 18:21:38 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/31 14:31:20 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int env_index_of(char **envp, char *name)
         return (-1);
     len = ft_strlen(name);
     i = 0;
-    while (envp[i])
+    while (envp && envp[i])
     {
 		if (ft_strncmp(envp[i], name, len) == 0
 		&& (envp[i][len] == '=' || envp[i][len] == '\0'))

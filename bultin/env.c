@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 17:59:14 by maram             #+#    #+#             */
-/*   Updated: 2025/08/31 12:11:29 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/31 14:32:10 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,34 +84,25 @@ void    free_envp(char **env)
     }
     free(env);
 }
-void    init_shlvl(char ***penvp)
-{
-    int     idx;
-    char    *lvl_str;
-    int     lvl;
-    char    *tmp;
 
-    if (!penvp || !*penvp)
-        return;
-    idx = env_index_of(*penvp, "SHLVL");
-    if (idx == -1)
-    {
-        env_set(penvp, "SHLVL", "1");
-        return;
-    }
-    lvl_str = (*penvp)[idx] + 6;
-    if (!is_numeric_str(lvl_str))
-        lvl = 0;
-    else
-    {
-        lvl = ft_atoi(lvl_str);
-        if (lvl < 0)
-            lvl = 0;
-    }
-    lvl++;
-    tmp = ft_itoa(lvl);
-    if (!tmp)
-        return;
-    env_set(penvp, "SHLVL", tmp);
-    free(tmp);
+void init_shlvl(char ***penvp)
+{
+	int     idx;
+	char    *s;
+	int     lvl;
+	char    *num;
+
+	if (!penvp || !*penvp)
+		return ;
+	idx = env_index_of(*penvp, "SHLVL");
+	if (idx == -1)
+		return ((void)env_set(penvp, "SHLVL", "1"));
+	s = (*penvp)[idx] + 6;
+	lvl = (is_numeric_str(s) ? ft_atoi(s) : 0);
+	if (lvl < 0) lvl = 0;
+	lvl += 1;
+	num = ft_itoa(lvl);
+	if (!num) return ;
+	env_set(penvp, "SHLVL", num);
+	free(num);
 }

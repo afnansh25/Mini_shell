@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/31 13:30:00 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/31 13:54:18 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,7 +184,7 @@ int exec_builtin_in_child(t_cmd *cmd, t_shell *shell);
 
 //heredoc
 int handle_all_heredocs(t_cmd *cmd_list, t_shell *shell);
-int	process_all_heredocs(t_cmd *cmd, t_shell *shell);
+int process_all_heredocs(t_cmd *cmd, t_cmd *cmd_list_head, t_shell *shell);
 int	handle_here_doc(t_heredoc *hdoc, t_shell *shell, t_cmd *cmd_list);
 void	read_heredoc_input(int write_fd, char *limiter, int quoted, t_shell *shell);
 char	*expand_line_heredoc(char *line, t_shell *shell);
