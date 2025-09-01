@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 14:27:52 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/01 17:12:06 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/01 17:43:20 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,27 +93,35 @@ int	handle_here_doc(t_heredoc *hdoc, t_shell *shell, t_cmd *cmd_list)
 	if (pid < 0)
 		error_exit("fork", NULL, cmd_list, 1);
         if (pid == 0)
-        {
-                close(pipe_fd[0]);
-                read_heredoc_input(pipe_fd[1], hdoc->limiter, hdoc->quoted, shell);
-                free_envp(shell->envp);
-                free_cmd_list(cmd_list);
-                exit(0);
-        }
-        else
-        {
-                close(pipe_fd[1]);
-                waitpid(pid, &status, 0);
-                if ((WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-                        || (WIFEXITED(status) && WEXITSTATUS(status) == 1))
-                {
-					close(pipe_fd[0]);
-					return (-1); // signal parent to cancel pipeline
-                }
-                return (pipe_fd[0]); // return read end
-        }
-        return (-1); // fallback
+	{
+		close(pipe_fd[0]);
+		read_heredoc_input(pipe_fd[1], hdoc->limiter, hdoc->quoted, shell);
+		free_envp(shell->envp);
+		free_cmd_list(cmd_list);
+		exit(0);
+	}
+	else
+	{
+		close(pipe_fd[1]);
+		while (waitpid(pid, &status, 0) == -1)
+		{
+			if (errno != EINTR)
+			{
+				close(pipe_fd[0]);
+				return (-1);
+			}
+		}
+		if ((WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+			|| (WIFEXITED(status) && WEXITSTATUS(status) == 1))
+		{
+			close(pipe_fd[0]);
+			return (-1); // signal parent to cancel pipeline
+		}
+		return (pipe_fd[0]); // return read end
+	}
+	return (-1); // fallback
 }
+
 
 int	process_all_heredocs(t_cmd *cmd, t_cmd *cmd_list_head, t_shell *shell)
 {

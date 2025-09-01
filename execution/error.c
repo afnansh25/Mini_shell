@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 15:41:45 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/31 13:30:39 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/01 17:45:53 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,9 @@ void exit_child(t_exec *exec, t_cmd *cmd_list, int exit_code)
         free_envp(exec->shell->envp);
     free_cmd_list(head);
     free_exec_data(exec);
+	close(STDIN_FILENO);
+    close(STDOUT_FILENO);
+    close(STDERR_FILENO);
     exit(exit_code);
 }
 
