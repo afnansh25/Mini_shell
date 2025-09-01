@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 14:27:52 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/31 13:53:26 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/01 17:12:06 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,12 @@ while (i < cmd->n_heredocs)
 if (fd == -1)
 {
 	shell->exit_code = 1;
-	return (1);
+    if (cmd->infile != -1)
+    {
+        close(cmd->infile);
+        cmd->infile = -1;
+    }
+    return (1);
 }
 if (cmd->infile != -1)
 	close(cmd->infile);
