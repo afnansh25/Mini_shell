@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 15:30:31 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/31 13:28:48 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/02 17:39:18 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ void    run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i)
     //     exit(127);
     // }
     if (!cmd->argv || !cmd->argv[0])
-        exit(0);
+        exit_child(exec, exec->cmd_head, 0);
         /* Check if command is all whitespace */
     while (cmd->argv[0][j]) //---
     {
@@ -183,6 +183,16 @@ void fork_and_execute_all(t_cmd *cmd_list, t_exec *exec, t_shell *shell)
             error_exit("fork", exec, exec->cmd_head, 1);
         if (exec->pids[i] == 0)
             run_child(cmd, exec, shell, i);
+        if (cmd->infile != -1)
+        {
+            close(cmd->infile);
+            cmd->infile = -1;
+        }
+        if (cmd->outfile != -1)
+        {
+            close(cmd->outfile);
+            cmd->outfile = -1;
+        }
         cmd = cmd->next;
         i++;
     }
