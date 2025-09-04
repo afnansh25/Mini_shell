@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/31 13:54:18 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/04 16:50:56 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,7 +201,7 @@ t_exec	*init_exec_struct(t_cmd *cmd_list , t_shell *shell);
 void fork_and_execute_all(t_cmd *cmd_list, t_exec *exec, t_shell *shell);
 void    run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i);
 void    close_pipe_parent(t_exec *exec);
-void    close_pipe_files_child(t_exec *exec, t_cmd *cmd);
+void    close_pipe_files_child(t_exec *exec);
 void	setup_io(t_cmd *cmd, t_exec *exec, int i);
 void xdup2(int oldfd, int newfd, t_exec *exec);
 
@@ -232,7 +232,7 @@ void    init_shlvl(char ***penvp);
 int is_numeric_str(char *s);
 long long	ft_atoll(const char *s);
 unsigned char	normalize_exit_code(long long n);
-int	exec_exit(char **argv, t_shell *shell, int interactive);
+int     exec_exit(t_cmd *cmd, t_shell *shell, int interactive);
 
 // unset
 int	is_valid_identifier(char *s);
@@ -269,6 +269,7 @@ void	cd_perror(char *path);
 
 
 void	print_decl(char *e);
+// 11
 // ------------------------------------------------------------------------------------------------------
 
 #endif

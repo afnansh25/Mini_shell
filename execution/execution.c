@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:51:20 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/08/31 13:09:41 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/04 16:48:58 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int exec_builtin_in_parent(t_cmd *cmd, t_shell *shell)
     if (ft_strncmp(cmd->argv[0], "export", 7) == 0)
         return (exec_export(cmd->argv, shell));
     if (!ft_strncmp(cmd->argv[0], "exit", 5))
-        return (exec_exit(cmd->argv, shell, interactive));
+        return (exec_exit(cmd, shell, interactive));
     if (ft_strncmp(cmd->argv[0], "unset", 6) == 0)
         return (exec_unset(cmd->argv, shell));
     return(status);
@@ -75,7 +75,7 @@ int exec_builtin_in_child(t_cmd *cmd, t_shell *shell)
     if (ft_strncmp(cmd->argv[0], "unset", 6) == 0)
         return (exec_unset(cmd->argv, shell));
     if (ft_strncmp(cmd->argv[0], "exit", 5) == 0)
-        return (exec_exit(cmd->argv, shell, 0));
+        return (exec_exit(cmd, shell, 0));
     return (0);
 }
 

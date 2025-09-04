@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:29:10 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/31 13:43:41 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/04 16:44:54 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ int main(int ac, char **av, char **envp)
         }
         free(line);
     }
-
     free_envp(shell.envp);                          // free your private env
+    free_arr(shell.exp);
     return (0);
 }

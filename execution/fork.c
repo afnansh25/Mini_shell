@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fork.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 15:30:31 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/02 17:39:18 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/02 18:31:10 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,10 @@ void	setup_io(t_cmd *cmd, t_exec *exec, int i)
 		xdup2(exec->pipes[i][1], STDOUT_FILENO, exec); // write to next pipe 
 }
 
-void    close_pipe_files_child(t_exec *exec, t_cmd *cmd)
+void    close_pipe_files_child(t_exec *exec)
 {
-    int j;
+    int     j;
+    t_cmd   *tmp;
 
     j = 0;
     while (j < exec->cmd_count - 1)
@@ -48,16 +49,21 @@ void    close_pipe_files_child(t_exec *exec, t_cmd *cmd)
             exec->pipes[j][1] = -1;
         }
         j++;
-    }
-    if(cmd->infile != -1)
-    {
-        close(cmd->infile);
-        cmd->infile = -1;
-    }
-    if(cmd->outfile != -1)
-    {
-        close(cmd->outfile);
-        cmd->outfile = -1;
+        tmp = exec->cmd_head;
+        while (tmp)
+        {
+            if (tmp->infile != -1)
+            {
+                close(tmp->infile);
+                tmp->infile = -1;
+            }
+            if (tmp->outfile != -1)
+            {
+                close(tmp->outfile);
+                tmp->outfile = -1;
+            }
+            tmp = tmp->next;
+        }
     }
 }
 
@@ -100,7 +106,7 @@ void    run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i)
     signal(SIGINT, SIG_DFL);
     signal(SIGQUIT, SIG_DFL);
     setup_io(cmd, exec, i);
-    close_pipe_files_child(exec, cmd);
+    close_pipe_files_child(exec);
     /* Handle empty command (including "") */
     //    if (!cmd->argv || !cmd->argv[0])//--
     // {
@@ -108,7 +114,7 @@ void    run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i)
     //     exit(127);
     // }
     if (!cmd->argv || !cmd->argv[0])
-        exit_child(exec, exec->cmd_head, 0);
+        exit(0);
         /* Check if command is all whitespace */
     while (cmd->argv[0][j]) //---
     {

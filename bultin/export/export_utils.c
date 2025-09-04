@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 14:39:59 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/29 17:52:44 by maram            ###   ########.fr       */
+/*   Updated: 2025/09/04 16:44:22 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,11 @@ int   export_add(char ***pexp, char *name)
     if (!newv)
         return (1);
     i = 0;
-    while(i++ < n)
+    while (i < n)
+    {
         newv[i] = (*pexp)[i];
+        i++;
+    }
     newv[n] = ft_strdup(name);
     if (!newv[n])
         return (free(newv), 1);
