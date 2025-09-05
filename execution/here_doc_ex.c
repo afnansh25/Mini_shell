@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 14:27:52 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/05 14:06:45 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/05 15:19:08 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,13 @@ void    sigint_heredoc_handler(int sig)
 {
     int *p;
     (void)sig;
+	g_signo = SIGINT;
     p = heredoc_fd_ptr();
     if (*p != -1)
-        close(*p);          // close write end so parent sees EOF
+        {close(*p);}          // close write end so parent sees EOF
+	close(STDIN_FILENO); 
     write(1, "\n", 1);
-    exit(130);             // child exits with 130 (SIGINT)
+    // exit(130);             // child exits with 130 (SIGINT)
 }
 
 // void    sigint_heredoc_handler(int sig)
@@ -102,6 +104,7 @@ void	read_heredoc_input(int write_fd, t_heredoc *hdoc, t_shell *shell, t_cmd *cm
 {
 	char	*line;
 	char	*expand;
+	int 	code; 
 	size_t	len;
 	
 	*heredoc_fd_ptr() = write_fd;
@@ -114,7 +117,7 @@ void	read_heredoc_input(int write_fd, t_heredoc *hdoc, t_shell *shell, t_cmd *cm
 		{
 			break;
 		}
-		if (ft_strncmp(line, hdoc->limiter, len) == 0)
+		if (ft_strncmp(line, hdoc->limiter, len) == 0 && line[len] == '\0')
 		{
 			free(line);
 			break ;
@@ -136,10 +139,19 @@ void	read_heredoc_input(int write_fd, t_heredoc *hdoc, t_shell *shell, t_cmd *cm
 	}
 	close(write_fd);
 	*heredoc_fd_ptr() = -1;
-	// Clean up before exit
-	free_envp(shell->envp);
-	free_cmd_list(cmd_list);
-	exit(0);
+	{
+		code = 0;            /* initialization */
+	
+		if (g_signo == SIGINT)
+			code = 130;
+	
+		/* free the CHILD copies here */
+		free_cmd_list(cmd_list);
+		free_envp(shell->envp);
+	
+		g_signo = 0;         /* optional: reset for safety */
+		exit(code);
+	}
 }
 
 int	handle_here_doc(t_heredoc *hdoc, t_shell *shell, t_cmd *cmd_list)
@@ -173,7 +185,7 @@ int	handle_here_doc(t_heredoc *hdoc, t_shell *shell, t_cmd *cmd_list)
 			}
 		}
 		if ((WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-			|| (WIFEXITED(status) && WEXITSTATUS(status) == 1))
+			|| (WIFEXITED(status) && WEXITSTATUS(status) == 130))
 		{
 			close(pipe_fd[0]);
 			shell->exit_code = 130;
@@ -196,13 +208,12 @@ int	process_all_heredocs(t_cmd *cmd, t_cmd *cmd_list_head, t_shell *shell)
 		fd = handle_here_doc(&cmd->heredocs[i], shell, cmd_list_head);
 		if (fd == -1)
 		{
-			shell->exit_code = 1;
+			shell->exit_code = 130;
 			if (cmd->infile != -1)
 			{
 				close(cmd->infile);
 				cmd->infile = -1;
 			}
-			cleanup_session(shell, &cmd_list_head, 0);
 			return (1);
 		}
 		if (cmd->infile != -1)

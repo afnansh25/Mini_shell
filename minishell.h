@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/05 14:07:34 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/05 14:58:29 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@
 # include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+
+#include <signal.h>
+extern volatile sig_atomic_t g_signo; /* one global: signal number only */
 
 typedef struct s_shell
 {
@@ -174,7 +177,7 @@ void	free_cmd_list(t_cmd *cmd_list);
 //execution part
 //execution
 void execute_pipeline(t_cmd *cmd_list, t_shell *shell);
-int exec_builtin_in_ld(t_cmd *cmd, t_shell *shell);
+int exec_builtin_in_child(t_cmd *cmd, t_shell *shell);
 int exec_builtin_in_parent(t_cmd *cmd, t_shell *shell);
 int is_parent_builtin(char *cmd);
 int is_child_builtin(char *cmd);
