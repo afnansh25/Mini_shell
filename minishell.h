@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/05 14:58:29 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/05 15:52:50 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,13 +185,21 @@ int count_cmds(t_cmd *cmd);
 void wait_all_children(t_exec *exec, t_shell *shell);
 int exec_builtin_in_child(t_cmd *cmd, t_shell *shell);
 
-//heredoc
-int handle_all_heredocs(t_cmd *cmd_list, t_shell *shell);
-int process_all_heredocs(t_cmd *cmd, t_cmd *cmd_list_head, t_shell *shell);
-int	handle_here_doc(t_heredoc *hdoc, t_shell *shell, t_cmd *cmd_list);
+/* here_doc_sig*/
+void	hd_set_write_fd(int fd);
+void	hd_install_sig(void);
+int		hd_should_stop(char *line, char *lim);
+
+/* here_doc_ex*/
 void	read_heredoc_input(int write_fd, t_heredoc *hdoc, t_shell *shell, t_cmd *cmd_list);
+int		handle_here_doc(t_heredoc *hdoc, t_shell *shell, t_cmd *cmd_list);
+int		handle_all_heredocs(t_cmd *cmd_list, t_shell *shell);
+int		process_all_heredocs(t_cmd *cmd, t_cmd *head, t_shell *shell);
+
+/* here_doc_utils */
 char	*expand_line_heredoc(char *line, t_shell *shell);
-void	cleanup_session(t_shell *sh, t_cmd **head, int final);
+int	    hd_should_stop(char *line, char *lim);
+int	    hd_wait_and_check(pid_t pid, int rfd, t_shell *shell);
 
 //path
 char	*get_cmd_path(char *cmd, t_shell *shell, t_exec *exec, t_cmd *cmd_list);
