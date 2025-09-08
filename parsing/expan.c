@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expan.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:50:47 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/09/07 17:07:11 by maram            ###   ########.fr       */
+/*   Updated: 2025/09/08 16:31:31 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,6 @@ char *handle_dollar(char *input, int *i, t_shell *shell)
 char *handle_tilde(char *input, int *i, t_shell *shell)
 {
 	char	*home;
-	char	*result;
 
 	home = get_env_value("HOME", shell);
 	if (!home || home[0] == '\0')
