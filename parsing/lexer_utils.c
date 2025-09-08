@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 11:25:15 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/06 23:34:32 by maram            ###   ########.fr       */
+/*   Updated: 2025/09/08 18:40:01 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,20 +164,16 @@ int scan_complex_word_length(char *line, int i)
 		}
 		else if (line[i + j] == '\'' || line[i + j] == '"')
 		{
-			q = line[i + j++];
-			while (line[i + j] && line[i + j] != q)
-				j++;
-			if (line[i + j] == q)
-				j++;
-			// After closing a quote, if there's more content, it should be a separate token
-			// This handles cases like "$"HOME where "$" and ke re
-			//  should be separate
-			break;
+				q = line[i + j++];
+				while (line[i + j] && line[i + j] != q)
+						j++;
+				if (line[i + j] == q)
+						j++;
 		}
 		else
-			j++;
-	}
-	return (j);
+				j++;
+}
+return (j);
 }
 
 char *rmv_quotes(const char *s)

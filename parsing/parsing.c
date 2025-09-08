@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:24:28 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/31 11:38:54 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/08 18:16:44 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,13 @@ void set_token_types(t_token *tokens)
     t_token *current;
     int     is_cmd;
 
+    current = tokens;
+    while (current)
+    {
+        if (current->type == CMD || current->type == ARG)
+            current->type = WORD;
+        current = current->next;
+    }
     current = tokens;
     is_cmd = 1;
     while (current)
