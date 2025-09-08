@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_extend.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 14:40:08 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/30 12:28:18 by maram            ###   ########.fr       */
+/*   Updated: 2025/09/08 16:43:37 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,34 +51,32 @@ int cmp_env_names(char *a, char *b)
 	return (0);
 }
 
-void sort_env_ptrs(char **a)
+void    sort_env_ptrs(char **a)
 {
-	int   n;
-	int   j;
-	int   swapped;
-	char *tmp;
+        int     i;
+        int     j;
+        char    *tmp;
 
-	n = 0;
-	while (a[n++])
-	if (n < 2)
-		return ;
-	swapped = 1;
-	while (swapped)
-	{
-		swapped = 0;
-		j = 0;
-		while (j++ + 1 < n--)
-		{
-			if (cmp_env_names(a[j], a[j + 1]) > 0)
-			{
-				tmp = a[j];
-				a[j] = a[j + 1];
-				a[j + 1] = tmp;
-				swapped = 1;
-			}
-		}
-	}
+        if (!a)
+                return ;
+        i = 0;
+        while (a[i])
+        {
+                j = i + 1;
+                while (a[j])
+                {
+                        if (cmp_env_names(a[i], a[j]) > 0)
+                        {
+                                tmp = a[i];
+                                a[i] = a[j];
+                                a[j] = tmp;
+                        }
+                        j++;
+                }
+                i++;
+        }
 }
+
 char	**join_env_and_exp(char **envp, char **exp)
 {
 	char	**copy;

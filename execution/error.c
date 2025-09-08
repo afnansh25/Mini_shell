@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 15:41:45 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/01 17:45:53 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/08 17:00:00 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,10 @@ void exit_child(t_exec *exec, t_cmd *cmd_list, int exit_code)
     if (!head && exec)
         head = exec->cmd_head;
     if (exec && exec->shell)
+    {
         free_envp(exec->shell->envp);
+        free_arr(exec->shell->exp);
+    }
     free_cmd_list(head);
     free_exec_data(exec);
 	close(STDIN_FILENO);

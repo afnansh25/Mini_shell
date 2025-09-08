@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/05 15:52:50 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/08 16:48:09 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,9 +259,10 @@ void	print_unset_invalid(char *name, int *had_error);
 int	exec_unset(char **argv, t_shell *shell);
 
 //export
-int parse_export_arg(char *arg, char **name, char **value, int *has_eq);
+int parse_export_arg(char *arg, char **name, char **value, int *has_eq, int *append);
 char *make_env_pair(char *name, char *value);
 int env_set(char ***penvp, char *name, char *value);
+int env_append(char ***penvp, char *name, char *value);
 int export_one(t_shell *shell, char *arg);
 int	exec_export(char **argv, t_shell *shell);
 int   export_index_of(char **exp, char *name);
