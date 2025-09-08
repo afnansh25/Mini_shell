@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:51:20 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/09/05 15:26:56 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/07 16:57:34 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,57 @@ int is_parent_builtin(char *cmd)
     if (ft_strncmp(cmd, "unset", 6) == 0)
         return (1);
     return(0);
+}
+
+int is_variable_assignment(char *cmd)
+{
+    int i;
+    
+    if (!cmd || !cmd[0])
+        return (0);
+    
+    // Check if it contains an equals sign
+    i = 0;
+    while (cmd[i] && cmd[i] != '=')
+    {
+        // Variable name can only contain alphanumeric characters and underscores
+        if (!ft_isalnum(cmd[i]) && cmd[i] != '_')
+            return (0);
+        i++;
+    }
+    
+    // Must have an equals sign and at least one character before it
+    return (cmd[i] == '=' && i > 0);
+}
+
+int handle_variable_assignment(char *assignment, t_shell *shell)
+{
+    char *equals_pos;
+    char *var_name;
+    char *var_value;
+    int name_len;
+    
+    equals_pos = ft_strchr(assignment, '=');
+    if (!equals_pos)
+        return (0);
+    
+    name_len = equals_pos - assignment;
+    var_name = ft_substr(assignment, 0, name_len);
+    var_value = ft_strdup(equals_pos + 1);
+    
+    if (!var_name || !var_value)
+    {
+        free(var_name);
+        free(var_value);
+        return (0);
+    }
+    
+    // Set the environment variable
+    env_set(&shell->envp, var_name, var_value);
+    
+    free(var_name);
+    free(var_value);
+    return (1);
 }
 int exec_builtin_in_parent(t_cmd *cmd, t_shell *shell)
 {
@@ -122,6 +173,20 @@ void execute_pipeline(t_cmd *cmd_list, t_shell *shell)
         {return;}
     if (handle_all_heredocs(cmd_list, shell))
         {return;}
+    
+    // Check for variable assignment (single command with assignment)
+    if (cmd_list && cmd_list->next == NULL && cmd_list->argv && cmd_list->argv[0])
+    {
+        if (is_variable_assignment(cmd_list->argv[0]))
+        {
+            if (handle_variable_assignment(cmd_list->argv[0], shell))
+                shell->exit_code = 0;
+            else
+                shell->exit_code = 1;
+            return;
+        }
+    }
+    
 	if (cmd_list && cmd_list->next == NULL
         && cmd_list->argv && is_parent_builtin(cmd_list->argv[0]))
 	{

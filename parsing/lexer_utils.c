@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 11:25:15 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/23 19:36:10 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/06 23:34:32 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,42 @@ int scan_word_length(char *line, int i)
 	return (j);
 }
 
+int scan_complex_word_length(char *line, int i)
+{
+	int j = 0;
+	char q;
+
+	while (line[i + j] && line[i + j] != ' ' &&
+		line[i + j] != '|' && line[i + j] != '<' && line[i + j] != '>')
+	{
+		if (line[i + j] == '$' && (line[i + j + 1] == '\'' || line[i + j + 1] == '"'))
+		{
+			// Handle $'...' or $"..." patterns
+			q = line[i + j + 1];
+			j += 2; // Skip $ and opening quote
+			while (line[i + j] && line[i + j] != q)
+				j++;
+			if (line[i + j] == q)
+				j++; // Skip closing quote
+		}
+		else if (line[i + j] == '\'' || line[i + j] == '"')
+		{
+			q = line[i + j++];
+			while (line[i + j] && line[i + j] != q)
+				j++;
+			if (line[i + j] == q)
+				j++;
+			// After closing a quote, if there's more content, it should be a separate token
+			// This handles cases like "$"HOME where "$" and ke re
+			//  should be separate
+			break;
+		}
+		else
+			j++;
+	}
+	return (j);
+}
+
 char *rmv_quotes(const char *s)
 {
 	int i;
@@ -171,5 +207,69 @@ char *rmv_quotes(const char *s)
 	}
 	rs[k] = '\0';
     return (rs);
+}
+
+char *handle_complex_quotes(const char *s)
+{
+	int i;
+	int k;
+	char quote;
+	char *rs;
+
+	i = 0;
+	k = 0;
+	rs = malloc(ft_strlen(s) + 1);
+	if (!rs)
+		return (NULL);
+	while (s[i])
+	{
+		if (s[i] == '$' && (s[i + 1] == '\'' || s[i + 1] == '"'))
+		{
+			// Handle $'...' or $"..." patterns
+			quote = s[i + 1];
+			i += 2; // Skip $ and opening quote
+			while (s[i] && s[i] != quote)
+			{
+				rs[k++] = s[i++];
+			}
+			if (s[i] == quote)
+				i++; // Skip closing quote
+		}
+		else if (s[i] == '\'' || s[i] == '"')
+		{
+			quote = s[i++];
+			while (s[i] && s[i] != quote)
+			{
+				rs[k++] = s[i++];
+			}
+			if (s[i] == quote)
+				i++; // Skip closing quote
+		}
+		else if (s[i] == '\\')
+		{
+			// Handle backslash escaping
+			if (s[i + 1] == '$')
+			{
+				// Preserve backslash before dollar sign for variable expansion
+				rs[k++] = s[i++];
+				rs[k++] = s[i++];
+			}
+			else if (s[i + 1])
+			{
+				rs[k++] = s[i + 1];
+				i += 2;
+			}
+			else
+			{
+				rs[k++] = s[i++];
+			}
+		}
+		else
+		{
+			rs[k++] = s[i++];
+		}
+	}
+	rs[k] = '\0';
+	return (rs);
 }
 

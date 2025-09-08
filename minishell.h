@@ -116,6 +116,8 @@ t_token_type	get_token_type(char c, char next, int *len);
 //lexer_utils
 int	is_invalid_sequence(char *line, int i);
 int scan_word_length(char *line, int i);
+int scan_complex_word_length(char *line, int i);
+char *handle_complex_quotes(const char *s);
 void	print_syntax_error(char *line, int i);
 int	validate_syntax(t_token *tokens);
 t_token	*new_token(char *token, t_token_type type, t_quote_type quote);
@@ -152,6 +154,7 @@ void	free_arg_list(t_arg *list);       // free if error
 char    *expand_variables(char *input, t_shell *shell);
 void    expand_token_list(t_token *token, t_shell *shell);
 char    *handle_dollar(char *input, int *i, t_shell *shell);
+char    *handle_tilde(char *input, int *i, t_shell *shell);
 char    *extract_var_name(char *s, int *len);
 char    *get_var_value(char *var_name, t_shell *shell);
 
@@ -181,6 +184,8 @@ int exec_builtin_in_child(t_cmd *cmd, t_shell *shell);
 int exec_builtin_in_parent(t_cmd *cmd, t_shell *shell);
 int is_parent_builtin(char *cmd);
 int is_child_builtin(char *cmd);
+int is_variable_assignment(char *cmd);
+int handle_variable_assignment(char *assignment, t_shell *shell);
 int count_cmds(t_cmd *cmd);
 void wait_all_children(t_exec *exec, t_shell *shell);
 int exec_builtin_in_child(t_cmd *cmd, t_shell *shell);

@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 17:44:19 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/05 15:24:52 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/05 16:29:32 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void    handle_redir_in(t_cmd *cmd, t_token **token_ptr)
         perror(filename);
         cmd->redir_error = 1;
     }
-    else if (cmd->outfile != -1 && fcntl(cmd->infile, F_SETFD, FD_CLOEXEC) == -1)
+    else if (fcntl(cmd->infile, F_SETFD, FD_CLOEXEC) == -1)
     {
         ft_putstr_fd("minishell: ", 2);
         perror("fcntl");
@@ -39,14 +39,14 @@ void    handle_redir_in(t_cmd *cmd, t_token **token_ptr)
         cmd->infile = -1;
         cmd->redir_error = 1;
     }
-    else if (fcntl(cmd->outfile, F_SETFD, FD_CLOEXEC) == -1)
-    {
-        ft_putstr_fd("minishell: ", 2);
-        perror("fcntl");
-        close(cmd->outfile);
-        cmd->outfile = -1;
-        cmd->redir_error = 1;
-    }
+    // else if (fcntl(cmd->outfile, F_SETFD, FD_CLOEXEC) == -1)
+    // {
+    //     ft_putstr_fd("minishell: ", 2);
+    //     perror("fcntl");
+    //     close(cmd->outfile);
+    //     cmd->outfile = -1;
+    //     cmd->redir_error = 1;
+    // }
     free(filename);
     *token_ptr = (*token_ptr)->next;
 }

@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 12:28:23 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/04 16:47:51 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/05 16:48:17 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static void    cleanup_and_exit(t_shell *shell, t_cmd *cmd, unsigned char status
         free_cmd_list(cmd);
         free_envp(shell->envp);
         free_arr(shell->exp);
-        rl_clear_history();
+        clear_history();
         exit(status);
 }
 
