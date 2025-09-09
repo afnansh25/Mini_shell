@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 17:59:14 by maram             #+#    #+#             */
-/*   Updated: 2025/09/08 16:40:27 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/09 19:57:07 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,4 +159,19 @@ void init_shlvl(char ***penvp)
 	if (!num) return ;
 	env_set(penvp, "SHLVL", num);
 	free(num);
+}
+
+void init_uid(char ***penvp)
+{
+    uid_t   uid;
+    char    *uid_str;
+
+    if (!penvp || !*penvp)
+        return ;
+    uid = getuid();
+    uid_str = ft_itoa(uid);
+    if (!uid_str)
+        return ;
+    env_set(penvp, "UID", uid_str);
+    free(uid_str);
 }

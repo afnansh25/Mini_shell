@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:29:10 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/05 15:02:39 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/09 19:57:52 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ int main(int ac, char **av, char **envp)
         return (1);
     }
     init_shlvl(&shell.envp);
+      init_uid(&shell.envp);
     shell.exit_code = 0;
     shell.exp = NULL;                               // your expander state (if any)
     while (1)
