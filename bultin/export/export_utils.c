@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 14:39:59 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/08 18:35:38 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/08 16:48:53 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,19 +125,9 @@ int     exec_export(char **argv, t_shell *shell)
                 bang = ft_strchr(argv[i], '!');
                 if (bang)
                 {
-                        char    *err;
-                        char    *nl;
- 
-                        err = ft_strdup(bang);
-                        if (!err)
-                                return (1);
-                        nl = ft_strchr(err, '\n');
-                        if (nl)
-                                *nl = '\0';
                         ft_putstr_fd("minishell: ", 2);
-                        ft_putstr_fd(err, 2);
-                        ft_putstr_fd(": event not found\n", 2);
-                        free(err);
+                        ft_putstr_fd(bang, 2);
+                        ft_putendl_fd(": event not found", 2);
                         return (1);
                 }
                 if (export_one(shell, argv[i]))

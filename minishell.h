@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/08 18:11:05 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/08 16:48:09 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,6 @@ char    *handle_dollar(char *input, int *i, t_shell *shell);
 char    *handle_tilde(char *input, int *i, t_shell *shell);
 char    *extract_var_name(char *s, int *len);
 char    *get_var_value(char *var_name, t_shell *shell);
-void    split_tokens(t_token **head);
 
 //expan_utils
 char *append_str(char *str, char *suffix);

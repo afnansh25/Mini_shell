@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:50:52 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/09/08 18:43:41 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/08/31 12:10:41 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,88 +87,4 @@ int remove_empty_tokens(t_token **head, t_shell *shell)
         curr = curr->next;
     }
     return (0);
-}
-
-static int  is_assignment_word(const char *s)
-{
-    int i;
-
-    if (!s || !(ft_isalpha((unsigned char)s[0]) || s[0] == '_'))
-        return (0);
-    i = 1;
-    while (s[i] && s[i] != '=')
-    {
-        if (!(ft_isalnum((unsigned char)s[i]) || s[i] == '_'))
-            return (0);
-        i++;
-    }
-    if (s[i] != '=')
-        return (0);
-    return (1);
-}
-
-static char **split_whitespace(char *str)
-{
-    char    *tmp;
-    char    **res;
-    int             i;
-
-    tmp = ft_strdup(str);
-    if (!tmp)
-        return (NULL);
-    i = 0;
-    while (tmp[i])
-    {
-        if (tmp[i] == '\t')
-            tmp[i] = ' ';
-        i++;
-    }
-    res = ft_split(tmp, ' ');
-    free(tmp);
-    return (res);
-}
-
-void split_token_list(t_token **head)
-{
-    t_token *curr;
-    char    **parts;
-    int             i;
-    t_token *new;
-
-    curr = *head;
-    while (curr)
-    {
-        if (curr->quote == NO_QUOTE && curr->value
-            && (ft_strchr(curr->value, ' ') || ft_strchr(curr->value, '\t'))
-            && (curr->type == CMD || curr->type == ARG || curr->type == WORD)
-            && !ft_strchr(curr->value, '='))
-        {
-            parts = split_whitespace(curr->value);
-            if (parts && parts[0])
-            {
-                free(curr->value);
-                curr->value = ft_strdup(parts[0]);
-                i = 1;
-                while (parts[i])
-                {
-                    new = malloc(sizeof(t_token));
-                    if (!new)
-                        break;
-                    new->value = ft_strdup(parts[i]);
-                    new->type = ARG;
-                    new->quote = NO_QUOTE;
-                    new->next = curr->next;
-                    curr->next = new;
-                    curr = new;
-                    i++;
-                }
-                free_arr(parts);
-                curr = curr->next;
-                continue ;
-            }
-            if (parts)
-                free_arr(parts);
-        }
-        curr = curr->next;
-    }
 }

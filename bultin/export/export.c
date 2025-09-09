@@ -6,26 +6,11 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 16:54:20 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/08 18:33:55 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/08 16:46:55 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static void print_escaped_identifier(char *arg)
-{
-        int i;
-
-        i = 0;
-        while (arg[i])
-        {
-                if (arg[i] == '\\')
-                        ft_putstr_fd("\\\\", 2);
-                else
-                        ft_putchar_fd(arg[i], 2);
-                i++;
-        }
-}
 
 int parse_export_arg(char *arg, char **name, char **value, int *has_eq, int *append)
 {
@@ -177,7 +162,7 @@ int export_one(t_shell *shell, char *arg)
         if (!is_valid_identifier(name))
         {
                 ft_putstr_fd("minishell: export: `", 2);
-                print_escaped_identifier(arg);
+                ft_putstr_fd(arg, 2);
                 ft_putendl_fd("': not a valid identifier", 2);
                 free(name);
                 free(value);
