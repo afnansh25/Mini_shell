@@ -6,7 +6,7 @@
 /*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 17:27:35 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/06 23:37:41 by maram            ###   ########.fr       */
+/*   Updated: 2025/09/10 18:32:38 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,12 +137,15 @@ int	validate_syntax(t_token *tokens)
 				return (0);
 			}
 		}
-		// Check for || syntax error - this should be handled by the tokenizer
-		if (current->value && ft_strncmp(current->value, "||", 3) == 0)
-		{
-			ft_putstr_fd("minishell: syntax error near unexpected token `||'\n", 2);
-			return (0);
-		}
+		    // Check for || syntax error - mimic bash behavior for ||| sequences
+               if (current->value && ft_strncmp(current->value, "||", 3) == 0)
+               {
+                       if (current->next && current->next->type == PIPE)
+                               ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
+                       else
+                               ft_putstr_fd("minishell: syntax error near unexpected token `||'\n", 2);
+                       return (0);
+               }
 		if ((current->type == REDIR_IN || current->type == REDIR_OUT || 
 			 current->type == REDIR_APPEND || current->type == HEREDOC) && 
 			(!current->next || current->next->type != WORD))

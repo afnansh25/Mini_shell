@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 11:25:15 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/08 19:05:11 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/09 20:53:40 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,27 +220,32 @@ char *handle_complex_quotes(const char *s)
 	while (s[i])
 	{
 		if (s[i] == '$' && (s[i + 1] == '\'' || s[i + 1] == '"'))
-		{
-			// Handle $'...' or $"..." patterns
-			quote = s[i + 1];
-			i += 2; // Skip $ and opening quote
-			while (s[i] && s[i] != quote)
-			{
-				rs[k++] = s[i++];
-			}
-			if (s[i] == quote)
-				i++; // Skip closing quote
-		}
-		else if (s[i] == '\'' || s[i] == '"')
-		{
-			quote = s[i++];
-			while (s[i] && s[i] != quote)
-			{
-				rs[k++] = s[i++];
-			}
-			if (s[i] == quote)
-				i++; // Skip closing quote
-		}
+                {
+                        // Handle $'...' or $"..." patterns
+                        quote = s[i + 1];
+                        i += 2; // Skip $ and opening quote
+                        while (s[i] && s[i] != quote)
+                        {
+                                rs[k++] = s[i++];
+                        }
+                        if (s[i] == quote)
+                                i++; // Skip closing quote
+                        if (s[i])
+                                rs[k++] = '\x01';
+                }
+                else if (s[i] == '\'' || s[i] == '"')
+                {
+                        quote = s[i++];
+                        while (s[i] && s[i] != quote)
+                        {
+                                rs[k++] = s[i++];
+                        }
+                        if (s[i] == quote)
+                                i++; // Skip closing quote
+                        if (s[i])
+				rs[k++] = '\x01';
+                }
+                  
 		else if (s[i] == '\\')
 		{
 			// Handle backslash escaping
