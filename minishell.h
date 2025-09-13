@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/09 19:57:25 by maram            ###   ########.fr       */
+/*   Updated: 2025/09/13 14:02:58 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,50 +177,68 @@ void	free_tokens(t_token *token);
 void	*free_arr(char **arr);
 void	free_cmd_list(t_cmd *cmd_list);
 
-//execution part
+//----------------------------------EXECUTION----------------------------------------------------
+// -------exec-------
 //execution
 void execute_pipeline(t_cmd *cmd_list, t_shell *shell);
 int exec_builtin_in_child(t_cmd *cmd, t_shell *shell);
 int exec_builtin_in_parent(t_cmd *cmd, t_shell *shell);
-int is_parent_builtin(char *cmd);
+void wait_all_children(t_exec *exec, t_shell *shell);
+
+//exec_utils
+int count_cmds(t_cmd *cmd);
 int is_child_builtin(char *cmd);
+int is_parent_builtin(char *cmd);
 int is_variable_assignment(char *cmd);
 int handle_variable_assignment(char *assignment, t_shell *shell);
-int count_cmds(t_cmd *cmd);
-void wait_all_children(t_exec *exec, t_shell *shell);
-int exec_builtin_in_child(t_cmd *cmd, t_shell *shell);
 
-/* here_doc_sig*/
+//init_exec
+void	init_pipes(t_exec *exec, t_cmd *cmd_list);
+void	init_pids(t_exec *exec, t_cmd *cmd_list);
+t_exec	*init_exec_struct(t_cmd *cmd_list , t_shell *shell);
+
+// -------fork-------
+//fork
+void	setup_io(t_cmd *cmd, t_exec *exec, int i);
+void    run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i);
+void    fork_and_execute_all(t_cmd *cmd_list, t_exec *exec, t_shell *shell);
+
+//fork_utils
+int		ft_isspace(int c);
+void    xdup2(int oldfd, int newfd, t_exec *exec);
+void	close_if_open(int *fdp);
+void	close_pipe_files_child(t_exec *exec);
+void    close_pipe_parent(t_exec *exec);
+
+//run_utils
+int     is_blank(const char *s);
+void	exec_or_error(char *path, t_cmd *cmd, t_exec *exec, t_shell *shell);
+void	handle_empty_or_blank(t_cmd *cmd, t_exec *exec);
+void	handle_var_cmd(t_cmd *cmd, t_exec *exec, t_shell *shell);
+
+//path
+char	*get_cmd_path(char *cmd, t_shell *shell, t_exec *exec, t_cmd *cmd_list);
+char	*resolve_from_path(char *cmd, t_shell *shell, t_exec *exec, t_cmd *list);
+char	*handle_explicit_path(char *cmd, t_exec *exec, t_cmd *list);
+char	*build_cmd_path(char **paths, char *cmd);
+char	*find_path_variable(t_shell *shell);
+
+// -------here_doc-------
+//here_doc_sig
 void	hd_set_write_fd(int fd);
 void	hd_install_sig(void);
 int		hd_should_stop(char *line, char *lim);
 
-/* here_doc_ex*/
+//here_doc_ex
 void	read_heredoc_input(int write_fd, t_heredoc *hdoc, t_shell *shell, t_cmd *cmd_list);
 int		handle_here_doc(t_heredoc *hdoc, t_shell *shell, t_cmd *cmd_list);
 int		handle_all_heredocs(t_cmd *cmd_list, t_shell *shell);
 int		process_all_heredocs(t_cmd *cmd, t_cmd *head, t_shell *shell);
 
-/* here_doc_utils */
+//here_doc_utils
 char	*expand_line_heredoc(char *line, t_shell *shell);
 int	    hd_should_stop(char *line, char *lim);
 int	    hd_wait_and_check(pid_t pid, int rfd, t_shell *shell);
-
-//path
-char	*get_cmd_path(char *cmd, t_shell *shell, t_exec *exec, t_cmd *cmd_list);
-char	*build_cmd_path(char **paths, char *cmd);
-char	*find_path_variable(t_shell *shell);
-
-//pipes
-t_exec	*init_exec_struct(t_cmd *cmd_list , t_shell *shell);
-
-//fork
-void fork_and_execute_all(t_cmd *cmd_list, t_exec *exec, t_shell *shell);
-void    run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i);
-void    close_pipe_parent(t_exec *exec);
-void    close_pipe_files_child(t_exec *exec);
-void	setup_io(t_cmd *cmd, t_exec *exec, int i);
-void xdup2(int oldfd, int newfd, t_exec *exec);
 
 //error
 void error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code);

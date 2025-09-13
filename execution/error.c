@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 15:41:45 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/08 17:00:00 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/13 14:50:47 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,8 @@ void	free_exec_data(t_exec *exec)
 		{
 			if (exec->pipes[i])
 			{
-				if (exec->pipes[i][0] != -1)
-					close(exec->pipes[i][0]);
-				if (exec->pipes[i][1] != -1)
-					close(exec->pipes[i][1]);
+				close_if_open(&exec->pipes[i][0]);
+				close_if_open(&exec->pipes[i][1]);
 				free(exec->pipes[i]);
 			}
 			i++;
@@ -40,39 +38,39 @@ void	free_exec_data(t_exec *exec)
 	free(exec);
 }
 
+static void	free_cmd_node(t_cmd *node)
+{
+	int	i;
+
+	if (!node)
+		return ;
+	if (node->argv)
+	{
+		i = 0;
+		while (node->argv[i])
+			free(node->argv[i++]);
+		free(node->argv);
+	}
+	if (node->heredocs)
+	{
+		i = 0;
+		while (i < node->n_heredocs)
+			free(node->heredocs[i++].limiter);
+		free(node->heredocs);
+	}
+	close_if_open(&node->infile);
+	close_if_open(&node->outfile);
+	free(node);
+}
+
 void	free_cmd_list(t_cmd *cmd_list)
 {
 	t_cmd	*tmp;
-	int		i;
 
 	while (cmd_list)
 	{
 		tmp = cmd_list->next;
-		if (cmd_list->argv)
-		{
-			i = 0;
-			while (cmd_list->argv[i])
-			{
-				free(cmd_list->argv[i]);
-				i++;
-			}
-			free(cmd_list->argv);
-		}
-		if (cmd_list->heredocs)
-		{
-			i = 0;
-			while (i < cmd_list->n_heredocs)
-			{
-				free(cmd_list->heredocs[i].limiter);
-				i++;
-			}
-			free(cmd_list->heredocs);
-		}
-		if (cmd_list->infile != -1)
-			close(cmd_list->infile);
-		if (cmd_list->outfile != -1)
-			close(cmd_list->outfile);
-		free(cmd_list);
+		free_cmd_node(cmd_list);
 		cmd_list = tmp;
 	}
 }

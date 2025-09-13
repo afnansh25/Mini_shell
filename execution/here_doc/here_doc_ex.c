@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc_ex.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 14:27:52 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/05 15:51:05 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/13 13:54:15 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	read_heredoc_input(int write_fd, t_heredoc *hdoc, t_shell *shell, t_cmd *cm
 			break ;
 		hd_write_line(write_fd, line, shell, hdoc->quoted);
 	}
-	close(write_fd);
+	close_if_open(&write_fd);
 	hd_set_write_fd(-1);
 	code = 0;
 	if (g_signo == SIGINT)
@@ -68,10 +68,10 @@ int	handle_here_doc(t_heredoc *hdoc, t_shell *shell, t_cmd *cmd_list)
 		error_exit("fork", NULL, cmd_list, 1);
 	if (pid == 0)
 	{
-		close(pipe_fd[0]);
+		close_if_open(&pipe_fd[0]);
 		read_heredoc_input(pipe_fd[1], hdoc, shell, cmd_list);
 	}
-	close(pipe_fd[1]);
+	close_if_open(&pipe_fd[1]);
 	return (hd_wait_and_check(pid, pipe_fd[0], shell));
 }
 
@@ -94,8 +94,7 @@ int	process_all_heredocs(t_cmd *cmd, t_cmd *head, t_shell *shell)
 			}
 			return (1);
 		}
-		if (cmd->infile != -1)
-			close(cmd->infile);
+		close_if_open(&cmd->infile);
 		cmd->infile = fd;
 		i++;
 	}
