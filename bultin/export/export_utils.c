@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 14:39:59 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/08 16:48:53 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/14 18:07:43 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,36 +28,19 @@ int   export_index_of(char **exp, char *name)
     return (-1);
 }
 
-int   export_add(char ***pexp, char *name)
+int	export_add(char ***pexp, char *name)
 {
-    int     n;
-    int     i;
-    char    **newv;
+	int	n;
 
-    if (!name)
-        return (1);
-    if (export_index_of(*pexp, name) != -1)
-        return (0);
-    n = 0;
-    if (*pexp)
-        while ((*pexp)[n])
-            n++;
-    newv = malloc(sizeof(char *) * (n + 2));
-    if (!newv)
-        return (1);
-    i = 0;
-    while (i < n)
-    {
-        newv[i] = (*pexp)[i];
-        i++;
-    }
-    newv[n] = ft_strdup(name);
-    if (!newv[n])
-        return (free(newv), 1);
-    newv[n + 1] = NULL;
-    free(*pexp);
-    *pexp = newv;
-    return (0);
+	if (!name)
+		return (1);
+	if (export_index_of(*pexp, name) != -1)
+		return (0);
+	n = 0;
+	if (*pexp)
+		while ((*pexp)[n])
+			n++;
+	return (env_grow_append(pexp, n, name));
 }
 
 void   export_remove(char ***pexp, char *name)
@@ -81,60 +64,43 @@ void   export_remove(char ***pexp, char *name)
 
 void    export_print(char **envp, char **exp)
 {
-        char    **copy;
-        int             i;
+    char    **copy;
+    int             i;
 
-        copy = join_env_and_exp(envp, exp);
-        if (!copy)
-                return ;
-        sort_env_ptrs(copy);
-        i = 0;
-        while (copy[i])
-        {
-                print_decl(copy[i]);
-                i++;
-        }
-        free(copy);
+    copy = join_env_and_exp(envp, exp);
+    if (!copy)
+            return ;
+    sort_env_ptrs(copy);
+    i = 0;
+    while (copy[i])
+    {
+        print_decl(copy[i]);
+        i++;
+    }
+    free(copy);
 }
 
-int     exec_export(char **argv, t_shell *shell)
+int	exec_export(char **argv, t_shell *shell)
 {
-        int     i;
-        int     had_error;
-        char    *bang;
+	int	i;
+	int	had_error;
+	int	rc;
 
-        had_error = 0;
-        i = 1;
-        if (argv[1] == NULL)
-        {
-                export_print(shell->envp, shell->exp);
-                return (0);
-        }
-        while (argv[i])
-        {
-                if (argv[i][0] == '-')
-                {
-                        ft_putstr_fd("minishell: export: ", 2);
-                        ft_putchar_fd('-', 2);
-                        if (argv[i][1])
-                                ft_putchar_fd(argv[i][1], 2);
-                        ft_putendl_fd(": invalid option", 2);
-                        ft_putendl_fd("export: usage: export [-nf] [name[=value] ...] or export -p", 2);
-                        return (2);
-                }
-                bang = ft_strchr(argv[i], '!');
-                if (bang)
-                {
-                        ft_putstr_fd("minishell: ", 2);
-                        ft_putstr_fd(bang, 2);
-                        ft_putendl_fd(": event not found", 2);
-                        return (1);
-                }
-                if (export_one(shell, argv[i]))
-                        had_error = 1;
-                i++;
-        }
-        if (had_error)
-                return (1);
-        return (0);
+	had_error = 0;
+	i = 1;
+	if (argv[1] == NULL)
+	{
+		export_print(shell->envp, shell->exp);
+		return (0);
+	}
+	while (argv[i])
+	{
+		rc = process_export_token(shell, argv[i], &had_error);
+		if (rc != -1)
+			return (rc);
+		i++;
+	}
+	if (had_error)
+		return (1);
+	return (0);
 }

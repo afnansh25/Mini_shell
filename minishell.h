@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/13 14:02:58 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/14 18:12:18 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,14 @@ typedef struct s_exec
     t_shell  *shell;  //--
 
 }	t_exec;
+
+typedef struct s_export_arg
+{
+	char	*name;
+	char	*value;
+	int		has_eq;
+	int		append;
+}	t_export_arg;
 
 //parsing part
 //lexer
@@ -277,21 +285,36 @@ void    env_remove_at(char **envp, int idx);
 void	print_unset_invalid(char *name, int *had_error);
 int	exec_unset(char **argv, t_shell *shell);
 
+
 //export
-int parse_export_arg(char *arg, char **name, char **value, int *has_eq, int *append);
+int parse_export_arg(char *arg, t_export_arg *out);
 char *make_env_pair(char *name, char *value);
 int env_set(char ***penvp, char *name, char *value);
 int env_append(char ***penvp, char *name, char *value);
 int export_one(t_shell *shell, char *arg);
-int	exec_export(char **argv, t_shell *shell);
+
+//export_extend
+void    print_escaped_value_fd(int fd, const char *s);
+int     cmp_env_names(char *a, char *b);
+void    sort_env_ptrs(char **a);
+char	**join_env_and_exp(char **envp, char **exp);
+void	print_decl(char *e);
+
+//export_utils
 int   export_index_of(char **exp, char *name);
 int   export_add(char ***pexp, char *name);
 void   export_remove(char ***pexp, char *name);
-void    print_escaped_value_fd(int fd, const char *s);
-int cmp_env_names(char *a, char *b);
-void sort_env_ptrs(char **a);
-char	**join_env_and_exp(char **envp, char **exp);
-void	export_print(char **envp, char **exp);
+void    export_print(char **envp, char **exp);
+int	exec_export(char **argv, t_shell *shell);
+
+//export_utils2
+int	process_export_token(t_shell *shell, char *arg, int *had_error);
+int	env_grow_append(char ***pexp, int n, char *name);
+int	set_export_fields(t_export_arg *out, char *arg, int i);
+int	export_err_id(char *arg, t_export_arg *o);
+char    **append_env(char **envp, char *entry);
+
+
 //cd
 int	exec_cd(char **av, t_shell *shell);
 void	set_logical_pwd(char **av, char *target_dir, char *newpwd, t_shell *shell);
@@ -305,7 +328,6 @@ void	update_env_var(char *name, char *value, t_shell *shell);
 void	cd_perror(char *path);
 
 
-void	print_decl(char *e);
 // 11
 // ------------------------------------------------------------------------------------------------------
 

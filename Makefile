@@ -11,7 +11,7 @@ SRC         = main.c parsing/lexer.c parsing/signal.c parsing/parsing.c \
 			  bultin/pwd.c bultin/env.c bultin/echo.c \
               bultin/cd/cd.c bultin/unset.c bultin/exit.c \
               bultin/cd/cd_utils.c bultin/export/export.c \
-              bultin/export/export_utils.c bultin/export/export_extend.c
+              bultin/export/export_utils.c bultin/export/export_utils2.c bultin/export/export_extend.c
 
 OBJ         = $(SRC:.c=.o)
 

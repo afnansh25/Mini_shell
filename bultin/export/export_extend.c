@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_extend.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 14:40:08 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/08 16:43:37 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/14 11:47:29 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ void    print_escaped_value_fd(int fd, const char *s)
 	}	
 }
 
-// Compare "NAME" parts of "NAME=VALUE" strings
 int cmp_env_names(char *a, char *b)
 {
 	int i;
@@ -53,28 +52,28 @@ int cmp_env_names(char *a, char *b)
 
 void    sort_env_ptrs(char **a)
 {
-        int     i;
-        int     j;
-        char    *tmp;
+    int     i;
+    int     j;
+    char    *tmp;
 
-        if (!a)
-                return ;
-        i = 0;
-        while (a[i])
+    if (!a)
+        return ;
+    i = 0;
+    while (a[i])
+    {
+        j = i + 1;
+        while (a[j])
         {
-                j = i + 1;
-                while (a[j])
-                {
-                        if (cmp_env_names(a[i], a[j]) > 0)
-                        {
-                                tmp = a[i];
-                                a[i] = a[j];
-                                a[j] = tmp;
-                        }
-                        j++;
-                }
-                i++;
+            if (cmp_env_names(a[i], a[j]) > 0)
+            {
+                tmp = a[i];
+                a[i] = a[j];
+                a[j] = tmp;
+            }
+            j++;
         }
+        i++;
+    }
 }
 
 char	**join_env_and_exp(char **envp, char **exp)
@@ -103,9 +102,6 @@ char	**join_env_and_exp(char **envp, char **exp)
 	return (copy);
 }
 
-/* prints: declare -x KEY[="escaped value"] */
-
-//new
 void	print_decl(char *e)
 {
 	int	j;
@@ -123,21 +119,3 @@ void	print_decl(char *e)
 	else
 		ft_putchar_fd('\n', 1);
 }
-
-// void	export_print(char **envp, char **exp)
-// {
-// 	char	**copy;
-// 	int		i;
-
-// 	copy = join_env_and_exp(envp, exp);
-// 	if (!copy)
-// 		return ;
-// 	sort_env_ptrs(copy);
-// 	i = 0;
-// 	while (copy[i])
-// 	{
-// 		print_decl(copy[i]);
-// 		i++;
-// 	}
-// 	free(copy);
-// }
