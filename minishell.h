@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/14 18:12:18 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/15 15:06:30 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,14 @@ typedef struct s_export_arg
 	int		has_eq;
 	int		append;
 }	t_export_arg;
+
+
+//repl
+void	repl_loop(t_shell *sh);
+void	process_line(char *line, t_shell *sh);
+void	shell_shutdown(t_shell *sh);
+
+char	**dup_envp(char **src);
 
 //parsing part
 //lexer
@@ -266,24 +274,26 @@ int exec_pwd(char **av);
 // env
 int exec_env(char **av, t_shell *shell);
 char *get_env_value(char *name, t_shell *shell);
-int  env_count(char **env);
+
+//env_utils
+int     env_count(char **env);
 void    free_envp(char **env);
 void    init_shlvl(char ***penvp);
-void init_uid(char ***penvp);
+void    init_uid(char ***penvp);
 
 //------PARENT------------
 // exit
-int is_numeric_str(char *s);
-long long	ft_atoll(const char *s);
+int             is_numeric_str(char *s);
+long long	    ft_atoll(const char *s);
 unsigned char	normalize_exit_code(long long n);
-int     exec_exit(t_cmd *cmd, t_shell *shell, int interactive);
+int             exec_exit(t_cmd *cmd, t_shell *shell, int interactive);
 
 // unset
-int	is_valid_identifier(char *s);
-int env_index_of(char **envp, char *name);
+int	    is_valid_identifier(char *s);
+int     env_index_of(char **envp, char *name);
 void    env_remove_at(char **envp, int idx);
 void	print_unset_invalid(char *name, int *had_error);
-int	exec_unset(char **argv, t_shell *shell);
+int	    exec_unset(char **argv, t_shell *shell);
 
 
 //export

@@ -3,98 +3,83 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 17:59:14 by maram             #+#    #+#             */
-/*   Updated: 2025/09/09 19:57:07 by maram            ###   ########.fr       */
+/*   Updated: 2025/09/15 14:50:03 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char *find_cmd_in_path(char *cmd, char **envp)
+static char	*resolve_cmd_path_nf(char *cmd, t_shell *shell)
 {
-    char    *path_str;
-    char    **paths;
-    char    *tmp;
-    char    *full_path;
-    int     i;
+	char	*path_str;
+	char	**paths;
+	char	*full;
 
-    if (ft_strchr(cmd, '/'))
-    {
-        if (access(cmd, X_OK) == 0)
-            return (ft_strdup(cmd));
-        return (NULL);
-    }
-    path_str = NULL;
-    i = 0;
-    while (envp && envp[i])
-    {
-        if (ft_strncmp(envp[i], "PATH=", 5) == 0)
-        {
-            path_str = envp[i] + 5;
-            break ;
-        }
-        i++;
-    }
-    if (!path_str)
-        return (NULL);
-    paths = ft_split(path_str, ':');
-    if (!paths)
-        return (NULL);
-    i = 0;
-    while (paths[i])
-    {
-        tmp = ft_strjoin(paths[i], "/");
-        if (!tmp)
-            return (free_arr(paths), NULL);
-        full_path = ft_strjoin(tmp, cmd);
-        free(tmp);
-        if (!full_path)
-            return (free_arr(paths), NULL);
-        if (access(full_path, X_OK) == 0)
-            return (free_arr(paths), full_path);
-        free(full_path);
-        i++;
-    }
-    free_arr(paths);
-    return (NULL);
+	if (!cmd || !cmd[0])
+		return (NULL);
+	if (ft_strchr(cmd, '/'))
+	{
+		if (access(cmd, X_OK) == 0)
+			return (ft_strdup(cmd));
+		return (NULL);
+	}
+	path_str = find_path_variable(shell);
+	if (!path_str)
+		return (NULL);
+	paths = ft_split(path_str, ':');
+	if (!paths)
+		return (NULL);
+	full = build_cmd_path(paths, cmd);
+	free_arr(paths);
+	return (full);
 }
 
-int exec_env(char **av, t_shell *shell)
+static int	env_bad_opt(char *opt)
 {
-    int     i;
-    char    *path;
+	ft_putstr_fd("minishell: env: ", 2);
+	ft_putstr_fd(opt, 2);
+	ft_putstr_fd(": invalid option\n", 2);
+	return (1);
+}
 
-    if (av[1] != NULL)
-    {
-        if (av[1][0] == '-')
-        {
-            ft_putstr_fd("minishell: env: ", 2);
-            ft_putstr_fd(av[1], 2);
-            ft_putstr_fd(": invalid option\n", 2);
-            return (1);
-        }
-        path = find_cmd_in_path(av[1], shell->envp);
-        if (!path)
-        {
-            ft_putstr_fd("env: ", 2);
-            ft_putstr_fd(av[1], 2);
-            ft_putstr_fd(": No such file or directory\n", 2);
-            return (127);
-        }
-        execve(path, av + 1, shell->envp);
-        perror(av[1]);
-        free(path);
-        return (126);
-    }
-    i = 0;
-    while (shell->envp[i])
-    {
-        printf("%s\n", shell->envp[i]);
-        i++;
-    }
-    return (0);
+static int	env_run_prog(char **av, t_shell *shell)
+{
+	char	*path;
+
+	path = resolve_cmd_path_nf(av[1], shell);
+	if (!path)
+	{
+		ft_putstr_fd("env: ", 2);
+		ft_putstr_fd(av[1], 2);
+		ft_putstr_fd(": No such file or directory\n", 2);
+		return (127);
+	}
+	execve(path, av + 1, shell->envp);
+	perror(av[1]);
+	free(path);
+	return (126);
+}
+
+int	exec_env(char **av, t_shell *shell)
+{
+	int	i;
+
+	if (av[1] != NULL)
+	{
+		if (av[1][0] == '-')
+			return (env_bad_opt(av[1]));
+		return (env_run_prog(av, shell));
+	}
+	i = 0;
+	while (shell->envp[i])
+	{
+		printf("%s\n", shell->envp[i]);
+		i++;
+	}
+	return (0);
 }
 
 char *get_env_value(char *name, t_shell *shell)   
@@ -112,66 +97,4 @@ char *get_env_value(char *name, t_shell *shell)
         i++;
     }
     return (NULL);
-}
-
-int  env_count(char **env)
-{
-    int i;
-
-    i = 0;
-    while (env && env[i])
-        i++;
-    return (i);
-}
-
-void    free_envp(char **env)
-{
-    int i;
-
-    if (!env)
-        return;
-    i = 0;
-    while (env[i])
-    {
-        free(env[i]);
-        i++;
-    }
-    free(env);
-}
-//---======999
-void init_shlvl(char ***penvp)
-{
-	int     idx;
-	char    *s;
-	int     lvl;
-	char    *num;
-
-	if (!penvp || !*penvp)
-		return ;
-	idx = env_index_of(*penvp, "SHLVL");
-	if (idx == -1)
-		return ((void)env_set(penvp, "SHLVL", "1"));
-	s = (*penvp)[idx] + 6;
-	lvl = (is_numeric_str(s) ? ft_atoi(s) : 0);
-	if (lvl < 0) lvl = 0;
-	lvl += 1;
-	num = ft_itoa(lvl);
-	if (!num) return ;
-	env_set(penvp, "SHLVL", num);
-	free(num);
-}
-
-void init_uid(char ***penvp)
-{
-    uid_t   uid;
-    char    *uid_str;
-
-    if (!penvp || !*penvp)
-        return ;
-    uid = getuid();
-    uid_str = ft_itoa(uid);
-    if (!uid_str)
-        return ;
-    env_set(penvp, "UID", uid_str);
-    free(uid_str);
 }

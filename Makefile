@@ -1,6 +1,6 @@
 NAME        = minishell
 
-SRC         = main.c parsing/lexer.c parsing/signal.c parsing/parsing.c \
+SRC         = main.c repl.c parsing/lexer.c parsing/signal.c parsing/parsing.c \
               parsing/here_doc.c parsing/cmd_args.c parsing/clean.c \
               parsing/lexer_utils.c parsing/redirect.c parsing/expan.c \
               parsing/expan_utils.c \
@@ -8,7 +8,7 @@ SRC         = main.c parsing/lexer.c parsing/signal.c parsing/parsing.c \
 			  execution/fork/fork.c execution/fork/fork_utils.c execution/fork/run_utils.c execution/fork/path.c  \
 			  execution/here_doc/here_doc_ex.c execution/here_doc/here_doc_sig.c execution/here_doc/here_doc_utils.c \
 			  execution/error.c \
-			  bultin/pwd.c bultin/env.c bultin/echo.c \
+			  bultin/pwd.c bultin/env.c bultin/env_utils.c bultin/echo.c \
               bultin/cd/cd.c bultin/unset.c bultin/exit.c \
               bultin/cd/cd_utils.c bultin/export/export.c \
               bultin/export/export_utils.c bultin/export/export_utils2.c bultin/export/export_extend.c
