@@ -1,6 +1,6 @@
 NAME        = minishell
 
-SRC         = main.c repl.c parsing/lexer.c parsing/signal.c parsing/parsing.c \
+SRC         = main.c shell_loop.c parsing/lexer.c parsing/signal.c parsing/parsing.c \
               parsing/here_doc.c parsing/cmd_args.c parsing/clean.c \
               parsing/lexer_utils.c parsing/redirect.c parsing/expan.c \
               parsing/expan_utils.c \
