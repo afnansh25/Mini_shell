@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:24:28 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/08/31 11:38:54 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/19 18:28:14 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,82 +23,61 @@ void    init_cmd(t_cmd *cmd)
     cmd->next = NULL;
     cmd->redir_error = 0;
 }
-void set_token_types(t_token *tokens)
-{
-    t_token *current;
-    int     is_cmd;
 
-    current = tokens;
-    is_cmd = 1;
-    while (current)
-    {
-        if (current->type == PIPE)
-        {
-            is_cmd = 1;
-            current = current->next;
-        }
-        else if (current->type == REDIR_IN || current->type == REDIR_OUT
-            || current->type == REDIR_APPEND || current->type == HEREDOC)
-        {
-            current = current->next;
-            if (current)
-                current = current->next;
-        }
-        else if (current->type == WORD)
-        {
-            if (is_cmd)
-            {
-                current->type = CMD;
-                is_cmd = 0;
-            }
-            else
-                current->type = ARG;
-            current = current->next;
-        }
-        else
-            current = current->next;
-    }
+int	is_redir(int t)
+{
+	return (t == REDIR_IN || t == REDIR_OUT
+		|| t == REDIR_APPEND || t == HEREDOC);
 }
 
-t_cmd *parse_cmd(t_token **token_ptr)
-{
-	t_cmd *cmd;
-	t_token *current;
 
-	cmd = malloc(sizeof(t_cmd));
+int	process_node(t_cmd *cmd, t_token **cur)
+{
+	if (is_redir((*cur)->type))
+	{
+		handle_redirection(cmd, cur);
+		if (cmd->redir_error)
+			return (2);
+		return (1);
+	}
+	if ((*cur)->type == CMD || (*cur)->type == ARG)
+	{
+		if (!add_arg_to_cmd(cmd, (*cur)->value))
+			return (0);
+		*cur = (*cur)->next;
+		return (1);
+	}
+	*cur = (*cur)->next;
+	return (1);
+}
+
+t_cmd	*parse_cmd(t_token **token_ptr)
+{
+	t_cmd	*cmd;
+	t_token	*cur;
+	int		r;
+
+	cmd = malloc(sizeof(*cmd));
 	if (!cmd)
 		return (NULL);
 	init_cmd(cmd);
-	
-	// First pass: collect command and initial arguments
 	handle_cmd_and_args(cmd, token_ptr);
-	
-	// Second pass: handle redirections and collect any remaining arguments
-	current = *token_ptr;
-    while (current && current->type != PIPE)
-    {
-        if (current->type == REDIR_APPEND || current->type == REDIR_IN
-                || current->type == REDIR_OUT || current->type == HEREDOC)
-        {
-            handle_redirection(cmd, &current);
-            if (cmd->redir_error)
-                break;
-        }
-        else if (current->type == CMD || current->type == ARG)
-        {
-            if (!add_arg_to_cmd(cmd, current->value))
-            {
-                free_cmd_list(cmd);
-                return (NULL);
-            }
-            current = current->next;
-        }
-        else
-            current = current->next;
-    }
-	*token_ptr = current;
+	cur = *token_ptr;
+	while (cur && cur->type != PIPE)
+	{
+		r = process_node(cmd, &cur);
+		if (r == 0)
+		{
+			free_cmd_list(cmd);
+			return (NULL);
+		}
+		if (r == 2)
+			break ;
+	}
+	*token_ptr = cur;
 	return (cmd);
 }
+
 
 t_cmd *parse_pipeline(t_token *token_list)
 {

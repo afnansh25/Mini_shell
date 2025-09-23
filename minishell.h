@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/15 15:06:30 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/23 12:54:28 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "libft/libft.h"
 # include <fcntl.h>
+#include <limits.h>
 # include <stdio.h> 
 # include <stdlib.h>
 # include <unistd.h>
@@ -24,8 +25,8 @@
 # include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
-
 #include <signal.h>
+
 extern volatile sig_atomic_t g_signo; /* one global: signal number only */
 
 typedef struct s_shell
@@ -114,6 +115,16 @@ typedef struct s_export_arg
 }	t_export_arg;
 
 
+typedef struct s_exp
+{
+	char		*s;
+	char		*res;
+	int			i;
+	int			f;      /* bit0: in_single, bit1: in_double */
+	t_shell		*sh;
+}	t_exp;
+
+
 //repl
 void	repl_loop(t_shell *sh);
 void	process_line(char *line, t_shell *sh);
@@ -122,28 +133,83 @@ void	shell_shutdown(t_shell *sh);
 char	**dup_envp(char **src);
 
 //parsing part
-//lexer
-int     handle_token(t_token **head, char *line, int *i);
-void    tokens(char *line, t_token **head, t_shell *shell);
-char *rmv_quotes(const char *s);
-char *get_word(char *line, int i, int *len, t_quote_type *quote);
-t_token_type	get_token_type(char c, char next, int *len);
 
+// lexer
+// check
+int	check_first_pipe(t_token *t);
+int	check_bang(t_token *c);
+int	check_double_pipe(t_token *c);
+int	check_redir_rules(t_token *c);
+int	check_pipe_then_redir(t_token *c);
+
+// err_eyntex
+int	err_newline(void);
+int	err_pipe(void);
+int	err_tok(const char *s);
+int	err_event(void);
+void	semicolon_error(t_token **head, t_shell *shell, char next);
+
+//handel_quote
+int	handle_dollar_quote(const char *s, int *i, char *rs, int *k);
+int	handle_plain_quote(const char *s, int *i, char *rs, int *k);
+int	handle_backslash(const char *s, int *i, char *rs, int *k);
+char	*handle_complex_quotes(const char *s);
 //lexer_utils
-int	is_invalid_sequence(char *line, int i);
-int scan_word_length(char *line, int i);
-int scan_complex_word_length(char *line, int i);
-char *handle_complex_quotes(const char *s);
-void	print_syntax_error(char *line, int i);
-int	validate_syntax(t_token *tokens);
 t_token	*new_token(char *token, t_token_type type, t_quote_type quote);
 void	token_add_back(t_token **token, t_token *new);
+void	build_token(char *line, int i, char token[3]);
+char *rmv_quotes(const char *s);
+
+// lexer
+t_token_type	get_token_type(char c, char next, int *len);
+char	*get_word(char *line, int i, int *len, t_quote_type *quote);
+int	create_token(char *line, int *i, t_token **tok, int *len);
+int	handle_token(t_token **head, char *line, int *i);
+void	tokens(char *line, t_token **head, t_shell *shell);
+
+// quote_utils
+int	is_stop(char c);
+void	skip_quoted(char *line, int i, int *j, char q);
+void	skip_dollar_quote(char *line, int i, int *j);
+int	scan_complex_word_length(char *line, int i);
+
+//validate_syntax
+int	validate_syntax(t_token *tokens); 
+
+//expansion
+// expand 
+
+int	do_skip_ctrl(t_exp *x);
+char	*expand_variables(char *input, t_shell *shell);
+void expand_token_list(t_token *token, t_shell *shell);
+
+// expand_utils
+char *append_str(char *str, char *suffix);
+char *append_char(char *str, char c);
+int	after_redir(t_token *prev, t_token *curr, t_shell *sh);
+int	handle_empty_token(t_token **head, t_token **prev,
+				t_token **curr, t_shell *sh);
+int	remove_empty_tokens(t_token **head, t_shell *sh);
+
+// expand_var
+int	do_backslash(t_exp *x);
+int	do_singlequote(t_exp *x);
+int	do_doublequote(t_exp *x);
+int	do_dollar(t_exp *x);
+int	do_tilde(t_exp *x);
+
+// var_utils
+char *get_var_value(char *var_name, t_shell *shell);
+char    *extract_var_name(char *s, int *len);
+char *handle_dollar(char *input, int *i, t_shell *shell);
+char *handle_tilde(char *input, int *i, t_shell *shell);
 
 //parsing
 void set_token_types(t_token *tokens);
 t_cmd	*parse_pipeline(t_token *token_list);
 t_cmd   *parse_cmd(t_token **token_ptr);
 void    init_cmd(t_cmd *cmd);
+int	is_redir(int t);
 
 //here_doc
 t_heredoc_node *collect_heredocs(t_token **token_ptr, int *count);
@@ -153,31 +219,30 @@ t_heredoc   *heredoc_list_to_array(t_heredoc_node *list, int count);
 void	    free_heredoc_list(t_heredoc_node *list);
 
 //redirct
-void	handle_redirection(t_cmd *cmd, t_token **token_ptr);
 void	handle_redir_append(t_cmd *cmd, t_token **token_ptr);
-void	handle_redir_out(t_cmd *cmd, t_token **token_ptr);
+void    handle_redirection(t_cmd *cmd, t_token **token_ptr);
+
+
+// redirct_utils
+void	errno_msg(const char *s);
+int	open_read_fd(t_cmd *cmd, const char *filename);
 void	handle_redir_in(t_cmd *cmd, t_token **token_ptr);
+void    handle_redir_out(t_cmd *cmd, t_token **token_ptr);
+int	open_append_fd(t_cmd *cmd, const char *filename);
 
 //cmd_args
 t_arg *collect_args(t_token **token_ptr);
 void	handle_cmd_and_args(t_cmd *cmd, t_token **token_ptr);
 int 	add_arg(t_arg **list, char *val); // to collect args
-int	add_arg_to_cmd(t_cmd *cmd, char *val); // to add args to existing cmd
 char	**arg_list_to_array(t_arg *list); // convert to argv
 void	free_arg_list(t_arg *list);       // free if error
 
-//expan
-char    *expand_variables(char *input, t_shell *shell);
-void    expand_token_list(t_token *token, t_shell *shell);
-char    *handle_dollar(char *input, int *i, t_shell *shell);
-char    *handle_tilde(char *input, int *i, t_shell *shell);
-char    *extract_var_name(char *s, int *len);
-char    *get_var_value(char *var_name, t_shell *shell);
+// cmd_utils
+int	copy_argv_to_list(t_arg **list, char **argv);
+int	rebuild_argv_from_list(t_cmd *cmd, t_arg *list);
+int	add_arg_to_cmd(t_cmd *cmd, char *val);
 
-//expan_utils
-char *append_str(char *str, char *suffix);
-char *append_char(char *str, char c);
-int     remove_empty_tokens(t_token **head, t_shell *shell);
+
 
 //handle signales
 void    rl_replace_line(const char *text, int clear_undo);
@@ -286,7 +351,8 @@ void    init_uid(char ***penvp);
 int             is_numeric_str(char *s);
 long long	    ft_atoll(const char *s);
 unsigned char	normalize_exit_code(long long n);
-int             exec_exit(t_cmd *cmd, t_shell *shell, int interactive);
+int	            exec_exit(t_cmd *cmd, t_shell *shell, int interactive);
+int	is_within_long_long(const char *s);
 
 // unset
 int	    is_valid_identifier(char *s);
@@ -339,6 +405,8 @@ void	cd_perror(char *path);
 
 
 // 11
+
+
 // ------------------------------------------------------------------------------------------------------
 
 #endif

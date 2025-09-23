@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:19 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/05 14:58:45 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/09/15 09:04:40 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,3 @@ void    setup_signals(void)
     sigaction(SIGINT, &sa, NULL);
     signal(SIGQUIT, SIG_IGN);
 }
-
-// void	sigint_heredoc_handler(int sig)
-// {
-// 	(void)sig;
-// 	write(1, "\n", 1);
-// 	exit(1);
-// }

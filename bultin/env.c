@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 17:59:14 by maram             #+#    #+#             */
-/*   Updated: 2025/09/15 14:50:03 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/22 18:48:28 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int	exec_env(char **av, t_shell *shell)
 	i = 0;
 	while (shell->envp[i])
 	{
-		printf("%s\n", shell->envp[i]);
+		ft_putendl_fd(shell->envp[i], STDOUT_FILENO);
 		i++;
 	}
 	return (0);

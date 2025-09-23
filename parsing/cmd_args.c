@@ -64,6 +64,7 @@ void	free_arg_list(t_arg *list)
 	while (list)
 	{
 		tmp = list->next;
+		free(list->value);
 		free(list);
 		list = tmp;
 	}
@@ -106,36 +107,3 @@ void handle_cmd_and_args(t_cmd *cmd, t_token **token_ptr)
     if (!cmd->argv)
         cmd->argv = NULL;
 }
-
-int	add_arg_to_cmd(t_cmd *cmd, char *val)
-{
-	t_arg *list;
-	int i;
-
-	list = NULL;
-	if (cmd->argv)
-	{
-		i = 0;
-		while (cmd->argv[i])
-		{
-			if (!add_arg(&list, cmd->argv[i]))
-			{
-				free_arg_list(list);
-				return (0);
-			}
-			i++;
-		}
-	}
-	if (!add_arg(&list, val))
-	{
-		free_arg_list(list);
-		return (0);
-	}
-	free(cmd->argv);
-	cmd->argv = arg_list_to_array(list);
-	if (!cmd->argv)
-		return (0);
-	return (1);
-}
-
-

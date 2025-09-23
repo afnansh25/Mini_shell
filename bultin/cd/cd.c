@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 13:54:17 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/08/31 17:18:52 by maram            ###   ########.fr       */
+/*   Updated: 2025/09/22 18:48:02 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ void	set_logical_pwd(char **av, char *target_dir, char *newpwd, t_shell *shell)
 	else
 		update_env_var("PWD", newpwd, shell);
 }
-
 int	exec_cd(char **av, t_shell *shell)
 {
 	char	*target_dir;
@@ -107,7 +106,7 @@ int	exec_cd(char **av, t_shell *shell)
 			perror("minishell: cd: getcwd"), free(oldpwd), free(alloc), 1);
 	set_logical_pwd(av, target_dir, newpwd, shell);
 	update_env_var("OLDPWD", oldpwd, shell);
-	if (print_newpwd)
-		printf("%s\n", newpwd);
+        if (print_newpwd)
+                ft_putendl_fd(newpwd, STDOUT_FILENO);
 	return (free(oldpwd), free(newpwd), free(alloc), 0);
 }

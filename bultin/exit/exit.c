@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 12:28:23 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/15 15:08:21 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/23 12:50:12 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+
 
 int	is_numeric_str(char *s)
 {
@@ -65,7 +67,6 @@ static int	exit_error(int kind, char *arg, t_shell *shell, t_cmd *cmd)
 	shell->exit_code = 1;
 	return (1);
 }
-
 int	exec_exit(t_cmd *cmd, t_shell *shell, int interactive)
 {
 	char		**argv;
@@ -74,7 +75,8 @@ int	exec_exit(t_cmd *cmd, t_shell *shell, int interactive)
 	argv = cmd->argv;
 	if (interactive)
 		ft_putendl_fd("exit", 2);
-	if (argv[1] && !is_numeric_str(argv[1]))
+	if (argv[1] && (!is_numeric_str(argv[1])
+			|| !is_within_long_long(argv[1])))
 		return (exit_error(0, argv[1], shell, cmd));
 	if (argv[1] && argv[2])
 		return (exit_error(1, NULL, shell, NULL));

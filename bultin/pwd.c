@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 18:04:39 by maram             #+#    #+#             */
-/*   Updated: 2025/09/14 18:12:48 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/22 18:48:58 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int exec_pwd(char **av)
         perror("minishell: pwd");
         return 1;
     }
-    printf("%s\n", cwd);
+    ft_putendl_fd(cwd, STDOUT_FILENO);
     free(cwd);
     return 0;
 }

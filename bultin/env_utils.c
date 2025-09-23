@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:49:26 by codespace         #+#    #+#             */
-/*   Updated: 2025/09/15 15:08:53 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/22 19:25:51 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,13 +81,16 @@ void init_shlvl(char ***penvp)
 	env_set(penvp, "SHLVL", num);
 	free(num);
 }
-
 void init_uid(char ***penvp)
 {
     uid_t   uid;
     char    *uid_str;
+    int     idx;
 
     if (!penvp || !*penvp)
+        return ;
+    idx = env_index_of(*penvp, "UID");
+    if (idx == -1)
         return ;
     uid = getuid();
     uid_str = ft_itoa(uid);
