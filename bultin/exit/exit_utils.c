@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit_utils.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/24 14:21:44 by maram             #+#    #+#             */
+/*   Updated: 2025/09/24 15:40:42 by maram            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
@@ -38,8 +49,8 @@ static int	start_index(const char *s, int *sign)
 
 int	is_within_long_long(const char *s)
 {
-	size_t	i;
-	int		sign;
+	size_t				i;
+	int					sign;
 	unsigned long long	limit;
 
 	sign = 1;

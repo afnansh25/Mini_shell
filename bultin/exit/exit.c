@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 12:28:23 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/23 12:50:12 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/09/24 14:24:14 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-
 
 int	is_numeric_str(char *s)
 {
@@ -44,13 +42,13 @@ unsigned char	normalize_exit_code(long long n)
 	return ((unsigned char)n);
 }
 
-void    cleanup_and_exit(t_shell *shell, t_cmd *cmd, unsigned char status)
+void	cleanup_and_exit(t_shell *shell, t_cmd *cmd, unsigned char status)
 {
-        free_cmd_list(cmd);
-        free_envp(shell->envp);
-        free_arr(shell->exp);
-        clear_history();
-        exit(status);
+	free_cmd_list(cmd);
+	free_envp(shell->envp);
+	free_arr(shell->exp);
+	clear_history();
+	exit(status);
 }
 
 static int	exit_error(int kind, char *arg, t_shell *shell, t_cmd *cmd)
@@ -67,6 +65,7 @@ static int	exit_error(int kind, char *arg, t_shell *shell, t_cmd *cmd)
 	shell->exit_code = 1;
 	return (1);
 }
+
 int	exec_exit(t_cmd *cmd, t_shell *shell, int interactive)
 {
 	char		**argv;

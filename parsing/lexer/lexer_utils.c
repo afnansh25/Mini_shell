@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 11:25:15 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/22 18:02:24 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/09/24 17:23:02 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ t_token	*new_token(char *token, t_token_type type, t_quote_type quote)
 	if (!new_token)
 		return (NULL);
 	new_token->value = token;
-    new_token->type = type;
+	new_token->type = type;
 	new_token->quote = quote;
 	new_token->next = NULL;
 	return (new_token);
@@ -79,31 +79,31 @@ void	build_token(char *line, int i, char token[3])
 	token[1] = '\0';
 }
 
-char *rmv_quotes(const char *s)
+char	*rmv_quotes(const char *s)
 {
-	int i;
-	int k ;
-	char qoute;
-	char *rs;
+	int		i;
+	int		k;
+	char	qoute;
+	char	*rs;
 
 	i = 0;
 	k = 0;
 	rs = malloc(ft_strlen(s) + 1);
 	if (!rs)
-        return (NULL);
-	while (s[i])  
+		return (NULL);
+	while (s[i])
 	{
-   		if (s[i] == '\'' || s[i] == '\"')
+		if (s[i] == '\'' || s[i] == '\"')
 		{
 			qoute = s[i++];
-			while(s[i] && s[i] != qoute)
+			while (s[i] && s[i] != qoute)
 				rs[k++] = s[i++];
 			if (s[i] == qoute)
-                i++;
+				i++;
 		}
-			else
-				rs[k++] = s[i++];
+		else
+			rs[k++] = s[i++];
 	}
 	rs[k] = '\0';
-    return (rs);
+	return (rs);
 }

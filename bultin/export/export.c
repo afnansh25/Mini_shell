@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 16:54:20 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/14 18:06:40 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/24 16:22:47 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,51 +38,51 @@ int	parse_export_arg(char *arg, t_export_arg *out)
 	return (0);
 }
 
-char *make_env_pair(char *name, char *value)
+char	*make_env_pair(char *name, char *value)
 {
-    char    *tmp;
-    char    *pair;
+	char	*tmp;
+	char	*pair;
 
-    tmp = NULL;
-    pair = NULL;
-    if (!value)
-        return (ft_strdup(name));
-    tmp = ft_strjoin(name, "=");
-    if (!tmp)
-        return (NULL);
-    pair = ft_strjoin(tmp, value);
-    free(tmp);
-    if (!pair)
-        return (NULL);
-    return (pair);
+	tmp = NULL;
+	pair = NULL;
+	if (!value)
+		return (ft_strdup(name));
+	tmp = ft_strjoin(name, "=");
+	if (!tmp)
+		return (NULL);
+	pair = ft_strjoin(tmp, value);
+	free(tmp);
+	if (!pair)
+		return (NULL);
+	return (pair);
 }
 
-int     env_set(char ***penvp, char *name, char *value)
+int	env_set(char ***penvp, char *name, char *value)
 {
-    int     idx;
-    char    *pair;
-    char    **nv;
+	int		idx;
+	char	*pair;
+	char	**nv;
 
-    if (!penvp || !*penvp || !name)
-            return (1);
-    pair = make_env_pair(name, value);
-    if (!pair)
-        return (1);
-    idx = env_index_of(*penvp, name);
-    if (idx != -1)
-    {
-        free((*penvp)[idx]);
-        (*penvp)[idx] = pair;
-        return (0);
-    }
-    nv = append_env(*penvp, pair);
-    if (!nv)
-    {
-        free(pair);
-        return (1);
-    }
-    *penvp = nv;
-    return (0);
+	if (!penvp || !*penvp || !name)
+		return (1);
+	pair = make_env_pair(name, value);
+	if (!pair)
+		return (1);
+	idx = env_index_of(*penvp, name);
+	if (idx != -1)
+	{
+		free((*penvp)[idx]);
+		(*penvp)[idx] = pair;
+		return (0);
+	}
+	nv = append_env(*penvp, pair);
+	if (!nv)
+	{
+		free(pair);
+		return (1);
+	}
+	*penvp = nv;
+	return (0);
 }
 
 int	env_append(char ***penvp, char *name, char *value)
@@ -136,4 +136,3 @@ int	export_one(t_shell *shell, char *arg)
 	free(out.value);
 	return (0);
 }
-

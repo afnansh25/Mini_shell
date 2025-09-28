@@ -6,22 +6,22 @@
 /*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:24:28 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/19 18:28:14 by maram            ###   ########.fr       */
+/*   Updated: 2025/09/24 17:55:39 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void    init_cmd(t_cmd *cmd)
+void	init_cmd(t_cmd *cmd)
 {
-    cmd->argv = NULL;
-    cmd->infile = -1;
-    cmd->outfile = -1;
-    cmd->append = 0;
-    cmd->heredocs = NULL;
-    cmd->n_heredocs = 0;
-    cmd->next = NULL;
-    cmd->redir_error = 0;
+	cmd->argv = NULL;
+	cmd->infile = -1;
+	cmd->outfile = -1;
+	cmd->append = 0;
+	cmd->heredocs = NULL;
+	cmd->n_heredocs = 0;
+	cmd->next = NULL;
+	cmd->redir_error = 0;
 }
 
 int	is_redir(int t)
@@ -29,7 +29,6 @@ int	is_redir(int t)
 	return (t == REDIR_IN || t == REDIR_OUT
 		|| t == REDIR_APPEND || t == HEREDOC);
 }
-
 
 int	process_node(t_cmd *cmd, t_token **cur)
 {
@@ -78,31 +77,26 @@ t_cmd	*parse_cmd(t_token **token_ptr)
 	return (cmd);
 }
 
-
-t_cmd *parse_pipeline(t_token *token_list)
+t_cmd	*parse_pipeline(t_token *token_list)
 {
-    t_cmd *head;
-    t_cmd *last;
-    t_cmd *new_cmd;
-    t_token *current;
+	t_cmd	*head;
+	t_cmd	*last;
+	t_cmd	*new_cmd;
+	t_token	*current;
 
-    head = NULL;
-    last = NULL;
-    current = token_list;
-    while (current)
-    {
-        new_cmd = parse_cmd(&current);
-        if (!head)
-            head = new_cmd;
-        else
-            last->next = new_cmd;
-        last = new_cmd;
-        if (current && current->type == PIPE)
-            current = current->next;
-    }
-    return head;
+	head = NULL;
+	last = NULL;
+	current = token_list;
+	while (current)
+	{
+		new_cmd = parse_cmd(&current);
+		if (!head)
+			head = new_cmd;
+		else
+			last->next = new_cmd;
+		last = new_cmd;
+		if (current && current->type == PIPE)
+			current = current->next;
+	}
+	return (head);
 }
-
-
-
-

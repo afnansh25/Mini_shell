@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 17:27:35 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/19 20:50:30 by maram            ###   ########.fr       */
+/*   Updated: 2025/09/27 16:53:24 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ t_token_type	get_token_type(char c, char next, int *len)
 	if (c == '|' && next == '|')
 	{
 		*len = 2;
-		return (PIPE); // We'll use PIPE for || for now, could add LOGICAL_OR type later
+		return (PIPE);
 	}
 	if (c == '<' || c == '>' || c == '|')
 	{
@@ -55,6 +55,7 @@ char	*get_word(char *line, int i, int *len, t_quote_type *quote)
 	raw = ft_substr(line, i, *len);
 	if (!raw)
 		return (NULL);
+	*quote = determine_quote_type(raw);
 	word = handle_complex_quotes(raw);
 	free(raw);
 	return (word);
@@ -63,7 +64,7 @@ char	*get_word(char *line, int i, int *len, t_quote_type *quote)
 int	create_token(char *line, int *i, t_token **tok, int *len)
 {
 	t_token_type	type;
-	t_quote_type quote;
+	t_quote_type	quote;
 	char			*val;
 
 	type = get_token_type(line[*i], line[*i + 1], len);
@@ -107,6 +108,8 @@ void	tokens(char *line, t_token **head, t_shell *shell)
 {
 	int	i;
 
+	if (has_unclosed_quote(line, shell))
+		return ;
 	i = 0;
 	while (line[i])
 	{
@@ -124,7 +127,7 @@ void	tokens(char *line, t_token **head, t_shell *shell)
 	}
 	if (*head && !validate_syntax(*head))
 	{
-		shell->exit_code = 2;
+		shell->exit_code = 258;
 		free_tokens(*head);
 		*head = NULL;
 	}

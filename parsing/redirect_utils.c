@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redirect_utils.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/24 17:55:27 by maram             #+#    #+#             */
+/*   Updated: 2025/09/27 12:16:28 by maabdulr         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	errno_msg(const char *s)
@@ -14,14 +26,6 @@ int	open_read_fd(t_cmd *cmd, const char *filename)
 	if (cmd->infile == -1)
 	{
 		errno_msg(filename);
-		cmd->redir_error = 1;
-		return (0);
-	}
-	if (fcntl(cmd->infile, F_SETFD, FD_CLOEXEC) == -1)
-	{
-		errno_msg("fcntl");
-		close(cmd->infile);
-		cmd->infile = -1;
 		cmd->redir_error = 1;
 		return (0);
 	}
@@ -46,30 +50,28 @@ void	handle_redir_in(t_cmd *cmd, t_token **token_ptr)
 	*token_ptr = (*token_ptr)->next;
 }
 
-
-void    handle_redir_out(t_cmd *cmd, t_token **token_ptr)
+void	handle_redir_out(t_cmd *cmd, t_token **token_ptr)
 {
-    char    *filename;
+	char	*filename;
 
-    if (!(*token_ptr) || !(*token_ptr)->next)
-        return ;
-    *token_ptr = (*token_ptr)->next;
-    filename = ft_strdup((*token_ptr)->value);
-    if (!filename)
-        return ;
-    if (cmd->outfile != -1)
-        close(cmd->outfile);
-    cmd->outfile = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-    if (cmd->outfile == -1)
-    {
+	if (!(*token_ptr) || !(*token_ptr)->next)
+		return ;
+	*token_ptr = (*token_ptr)->next;
+	filename = ft_strdup((*token_ptr)->value);
+	if (!filename)
+		return ;
+	if (cmd->outfile != -1)
+		close(cmd->outfile);
+	cmd->outfile = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (cmd->outfile == -1)
+	{
 		ft_putstr_fd("minishell: ", 2);
-        perror(filename);
-        cmd->redir_error = 1;
-    }
-    free(filename);
-    *token_ptr = (*token_ptr)->next;
+		perror(filename);
+		cmd->redir_error = 1;
+	}
+	free(filename);
+	*token_ptr = (*token_ptr)->next;
 }
-
 
 int	open_append_fd(t_cmd *cmd, const char *filename)
 {
@@ -80,14 +82,6 @@ int	open_append_fd(t_cmd *cmd, const char *filename)
 	if (cmd->outfile == -1)
 	{
 		errno_msg(filename);
-		cmd->redir_error = 1;
-		return (0);
-	}
-	if (fcntl(cmd->outfile, F_SETFD, FD_CLOEXEC) == -1)
-	{
-		errno_msg("fcntl");
-		close(cmd->outfile);
-		cmd->outfile = -1;
 		cmd->redir_error = 1;
 		return (0);
 	}

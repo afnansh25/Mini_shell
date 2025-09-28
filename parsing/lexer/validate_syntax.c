@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   validate_syntax.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/24 17:23:46 by maram             #+#    #+#             */
+/*   Updated: 2025/09/24 17:23:47 by maram            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	ends_with_pipe(t_token *t)
@@ -8,7 +20,6 @@ int	ends_with_pipe(t_token *t)
 		return (err_pipe());
 	return (1);
 }
-
 
 int	validate_syntax(t_token *tokens)
 {

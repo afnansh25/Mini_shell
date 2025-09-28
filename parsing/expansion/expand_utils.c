@@ -6,22 +6,22 @@
 /*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:50:52 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/09/19 18:14:01 by maram            ###   ########.fr       */
+/*   Updated: 2025/09/24 17:14:45 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char *append_str(char *str, char *suffix)
+char	*append_str(char *str, char *suffix)
 {
-	char *new;
+	char	*new;
 
 	new = ft_strjoin(str, suffix);
 	free(str);
 	return (new);
 }
 
-char *append_char(char *str, char c)
+char	*append_char(char *str, char c)
 {
 	int		len;
 	char	*new;
@@ -91,7 +91,7 @@ int	remove_empty_tokens(t_token **head, t_shell *sh)
 		if (r < 0)
 			return (1);
 		if (r > 0)
-			continue;
+			continue ;
 		if (c->quote == NO_QUOTE && c->value && after_redir(p, c, sh))
 			return (1);
 		p = c;

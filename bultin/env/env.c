@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 17:59:14 by maram             #+#    #+#             */
-/*   Updated: 2025/09/22 18:48:28 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/09/24 16:28:18 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,19 +82,19 @@ int	exec_env(char **av, t_shell *shell)
 	return (0);
 }
 
-char *get_env_value(char *name, t_shell *shell)   
+char	*get_env_value(char *name, t_shell *shell)
 {
-    size_t  name_len;
-    int     i;
+	size_t	name_len;
+	int		i;
 
-    name_len = ft_strlen(name);
-    i = 0;
-    while (shell->envp && shell->envp[i])
-    {
-        if (ft_strncmp(shell->envp[i], name, name_len) == 0
-            && shell->envp[i][name_len] == '=')
-            return (shell->envp[i] + name_len + 1);
-        i++;
-    }
-    return (NULL);
+	name_len = ft_strlen(name);
+	i = 0;
+	while (shell->envp && shell->envp[i])
+	{
+		if (ft_strncmp(shell->envp[i], name, name_len) == 0
+			&& shell->envp[i][name_len] == '=')
+			return (shell->envp[i] + name_len + 1);
+		i++;
+	}
+	return (NULL);
 }

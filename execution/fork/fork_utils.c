@@ -3,22 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   fork_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:51:20 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/09/13 14:34:12 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/24 17:08:38 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int ft_isspace(int c)
+int	ft_isspace(int c)
 {
-    return (c == ' '  || c == '\t' || c == '\n' || 
-            c == '\v' || c == '\f' || c == '\r');
+	return (c == ' ' || c == '\t' || c == '\n'
+		|| c == '\v' || c == '\f' || c == '\r');
 }
 
-void xdup2(int oldfd, int newfd, t_exec *exec)
+void	xdup2(int oldfd, int newfd, t_exec *exec)
 {
 	if (dup2(oldfd, newfd) == -1)
 		error_exit("dup2", exec, exec->cmd_head, 1);
@@ -35,7 +35,8 @@ void	close_if_open(int *fdp)
 
 void	close_pipe_files_child(t_exec *exec)
 {
-	int	j;
+	int		j;
+	t_cmd	*cmd;
 
 	j = 0;
 	while (j < exec->cmd_count - 1)
@@ -44,19 +45,20 @@ void	close_pipe_files_child(t_exec *exec)
 		close_if_open(&exec->pipes[j][1]);
 		j++;
 	}
-	while (exec->cmd_head)
+	cmd = exec->cmd_head;
+	while (cmd)
 	{
-		close_if_open(&exec->cmd_head->infile);
-		close_if_open(&exec->cmd_head->outfile);
-		exec->cmd_head = exec->cmd_head->next;
+		close_if_open(&cmd->infile);
+		close_if_open(&cmd->outfile);
+		cmd = cmd->next;
 	}
 }
 
-void    close_pipe_parent(t_exec *exec)
+void	close_pipe_parent(t_exec *exec)
 {
-    int i;
+	int	i;
 
-    i = 0;
+	i = 0;
 	while (i < exec->cmd_count - 1)
 	{
 		close_if_open(&exec->pipes[i][0]);

@@ -1,19 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   clean.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/24 17:23:52 by maram             #+#    #+#             */
+/*   Updated: 2025/09/24 17:50:00 by maram            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
-
-//debug
-void	print_tokens(t_token *tok)
-{
-	while (tok)
-	{
-		printf("[%s] '%s'\n", tok->type == CMD ? "CMD" :
-			tok->type == ARG ? "ARG" :
-			tok->type == PIPE ? "PIPE" :
-			tok->type == WORD ? "WORD" : "OTHER", tok->value);
-		tok = tok->next;
-	}
-}
-
 
 void	free_tokens(t_token *token)
 {
@@ -27,6 +24,7 @@ void	free_tokens(t_token *token)
 		token = tmp;
 	}
 }
+
 void	*free_arr(char **arr)
 {
 	size_t	i;

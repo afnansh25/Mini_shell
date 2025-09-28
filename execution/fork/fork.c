@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fork.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 15:30:31 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/13 13:41:23 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/24 17:09:44 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@ void	setup_io(t_cmd *cmd, t_exec *exec, int i)
 	if (cmd->infile != -1)
 		xdup2(cmd->infile, STDIN_FILENO, exec);
 	else if (i > 0)
-		xdup2(exec->pipes[i - 1][0], STDIN_FILENO, exec); // read from previous pipe 
+		xdup2(exec->pipes[i - 1][0], STDIN_FILENO, exec);
 	if (cmd->outfile != -1)
 		xdup2(cmd->outfile, STDOUT_FILENO, exec);
 	else if (i < exec->cmd_count - 1)
-		xdup2(exec->pipes[i][1], STDOUT_FILENO, exec); // write to next pipe 
+		xdup2(exec->pipes[i][1], STDOUT_FILENO, exec);
 }
 
 void	run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i)
@@ -42,24 +42,24 @@ void	run_child(t_cmd *cmd, t_exec *exec, t_shell *shell, int i)
 	exec_or_error(path, cmd, exec, shell);
 }
 
-void fork_and_execute_all(t_cmd *cmd_list, t_exec *exec, t_shell *shell)
+void	fork_and_execute_all(t_cmd *cmd_list, t_exec *exec, t_shell *shell)
 {
-    int i;
-    t_cmd *cmd;
+	int		i;
+	t_cmd	*cmd;
 
-    i = 0;
-    cmd = cmd_list;
-    while (cmd)
-    {
-        exec->pids[i] = fork();
-        if (exec->pids[i] < 0)
-            error_exit("fork", exec, exec->cmd_head, 1);
-        if (exec->pids[i] == 0)
-            run_child(cmd, exec, shell, i);
+	i = 0;
+	cmd = cmd_list;
+	while (cmd)
+	{
+		exec->pids[i] = fork();
+		if (exec->pids[i] < 0)
+			error_exit("fork", exec, exec->cmd_head, 1);
+		if (exec->pids[i] == 0)
+			run_child(cmd, exec, shell, i);
 		close_if_open(&cmd->infile);
 		close_if_open(&cmd->outfile);
-        cmd = cmd->next;
-        i++;
-    }
-    close_pipe_parent(exec);
+		cmd = cmd->next;
+		i++;
+	}
+	close_pipe_parent(exec);
 }

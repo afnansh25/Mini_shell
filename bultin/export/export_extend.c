@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   export_extend.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 14:40:08 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/14 11:47:29 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/24 15:43:17 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void    print_escaped_value_fd(int fd, const char *s)
+void	print_escaped_value_fd(int fd, const char *s)
 {
 	int	i;
 
@@ -22,27 +22,27 @@ void    print_escaped_value_fd(int fd, const char *s)
 	while (s[i])
 	{
 		if (s[i] == '"' || s[i] == '\\' || s[i] == '$')
-				ft_putchar_fd('\\', fd);
+			ft_putchar_fd('\\', fd);
 		ft_putchar_fd(s[i], fd);
 		i++;
-	}	
+	}
 }
 
-int cmp_env_names(char *a, char *b)
+int	cmp_env_names(char *a, char *b)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (a[i] && a[i] != '=' && b[i] && b[i] != '=')
 	{
-        if ((unsigned char)a[i] != (unsigned char)b[i])
-            return ((unsigned char)a[i] - (unsigned char)b[i]);
+		if ((unsigned char)a[i] != (unsigned char)b[i])
+			return ((unsigned char)a[i] - (unsigned char)b[i]);
 		i++;
 	}
 	if (a[i] == '=' || a[i] == '\0')
 	{
 		if (b[i] == '=' || b[i] == '\0')
-				return (0);
+			return (0);
 		return (-1);
 	}
 	if (b[i] == '=' || b[i] == '\0')
@@ -50,30 +50,30 @@ int cmp_env_names(char *a, char *b)
 	return (0);
 }
 
-void    sort_env_ptrs(char **a)
+void	sort_env_ptrs(char **a)
 {
-    int     i;
-    int     j;
-    char    *tmp;
+	int		i;
+	int		j;
+	char	*tmp;
 
-    if (!a)
-        return ;
-    i = 0;
-    while (a[i])
-    {
-        j = i + 1;
-        while (a[j])
-        {
-            if (cmp_env_names(a[i], a[j]) > 0)
-            {
-                tmp = a[i];
-                a[i] = a[j];
-                a[j] = tmp;
-            }
-            j++;
-        }
-        i++;
-    }
+	if (!a)
+		return ;
+	i = 0;
+	while (a[i])
+	{
+		j = i + 1;
+		while (a[j])
+		{
+			if (cmp_env_names(a[i], a[j]) > 0)
+			{
+				tmp = a[i];
+				a[i] = a[j];
+				a[j] = tmp;
+			}
+			j++;
+		}
+		i++;
+	}
 }
 
 char	**join_env_and_exp(char **envp, char **exp)

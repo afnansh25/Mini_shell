@@ -6,69 +6,69 @@
 /*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:51:20 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/09/10 14:35:33 by maram            ###   ########.fr       */
+/*   Updated: 2025/09/24 16:33:20 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int exec_builtin_in_parent(t_cmd *cmd, t_shell *shell)
+int	exec_builtin_in_parent(t_cmd *cmd, t_shell *shell)
 {
-    int interactive;
-    int status;
-        
-    interactive = isatty(0);
-    status = 0;
-    if (ft_strncmp(cmd->argv[0], "cd", 3) == 0)
-        return (exec_cd(cmd->argv, shell));
-    if (ft_strncmp(cmd->argv[0], "export", 7) == 0)
-        return (exec_export(cmd->argv, shell));
-    if (!ft_strncmp(cmd->argv[0], "exit", 5))
-        return (exec_exit(cmd, shell, interactive));
-    if (ft_strncmp(cmd->argv[0], "unset", 6) == 0)
-        return (exec_unset(cmd->argv, shell));
-    return(status);
+	int	interactive;
+	int	status;
+
+	interactive = isatty(0);
+	status = 0;
+	if (ft_strncmp(cmd->argv[0], "cd", 3) == 0)
+		return (exec_cd(cmd->argv, shell));
+	if (ft_strncmp(cmd->argv[0], "export", 7) == 0)
+		return (exec_export(cmd->argv, shell));
+	if (!ft_strncmp(cmd->argv[0], "exit", 5))
+		return (exec_exit(cmd, shell, interactive));
+	if (ft_strncmp(cmd->argv[0], "unset", 6) == 0)
+		return (exec_unset(cmd->argv, shell));
+	return (status);
 }
 
-int exec_builtin_in_child(t_cmd *cmd, t_shell *shell)
+int	exec_builtin_in_child(t_cmd *cmd, t_shell *shell)
 {
-    if (ft_strncmp(cmd->argv[0], "echo", 5) == 0)
-        return (exec_echo(cmd->argv));
-    if (ft_strncmp(cmd->argv[0], "pwd", 4) == 0)
-        return (exec_pwd(cmd->argv));
-    if (ft_strncmp(cmd->argv[0], "env", 4) == 0)
-        return (exec_env(cmd->argv, shell));
-    if (ft_strncmp(cmd->argv[0], "export", 7) == 0)
-        return (exec_export(cmd->argv, shell));
-    if (ft_strncmp(cmd->argv[0], "cd", 3) == 0)
-        return (exec_cd(cmd->argv, shell));
-    if (ft_strncmp(cmd->argv[0], "unset", 6) == 0)
-        return (exec_unset(cmd->argv, shell));
-    if (ft_strncmp(cmd->argv[0], "exit", 5) == 0)
-        return (exec_exit(cmd, shell, 0));
-    return (0);
+	if (ft_strncmp(cmd->argv[0], "echo", 5) == 0)
+		return (exec_echo(cmd->argv));
+	if (ft_strncmp(cmd->argv[0], "pwd", 4) == 0)
+		return (exec_pwd(cmd->argv));
+	if (ft_strncmp(cmd->argv[0], "env", 4) == 0)
+		return (exec_env(cmd->argv, shell));
+	if (ft_strncmp(cmd->argv[0], "export", 7) == 0)
+		return (exec_export(cmd->argv, shell));
+	if (ft_strncmp(cmd->argv[0], "cd", 3) == 0)
+		return (exec_cd(cmd->argv, shell));
+	if (ft_strncmp(cmd->argv[0], "unset", 6) == 0)
+		return (exec_unset(cmd->argv, shell));
+	if (ft_strncmp(cmd->argv[0], "exit", 5) == 0)
+		return (exec_exit(cmd, shell, 0));
+	return (0);
 }
 
-void wait_all_children(t_exec *exec, t_shell *shell)
+void	wait_all_children(t_exec *exec, t_shell *shell)
 {
-    int i;
-    int st;
+	int	i;
+	int	st;
 
-    i = 0;
-    while (i < exec->cmd_count)
-    {
-        if (waitpid(exec->pids[i], &st, 0) > 0)
-        {
-            if (i == exec->cmd_count - 1)
-            {
-                if (WIFEXITED(st))
-                    shell->exit_code = WEXITSTATUS(st);
-                else if (WIFSIGNALED(st))
-                    shell->exit_code = 128 + WTERMSIG(st);
-            }
-        }
-        i++;
-    }
+	i = 0;
+	while (i < exec->cmd_count)
+	{
+		if (waitpid(exec->pids[i], &st, 0) > 0)
+		{
+			if (i == exec->cmd_count - 1)
+			{
+				if (WIFEXITED(st))
+					shell->exit_code = WEXITSTATUS(st);
+				else if (WIFSIGNALED(st))
+					shell->exit_code = 128 + WTERMSIG(st);
+			}
+		}
+		i++;
+	}
 }
 
 int	handle_single_cmd(t_cmd *cmd, t_shell *shell)
@@ -109,4 +109,3 @@ void	execute_pipeline(t_cmd *cmd_list, t_shell *shell)
 	free_exec_data(exec);
 	setup_signals();
 }
-

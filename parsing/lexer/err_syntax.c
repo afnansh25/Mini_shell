@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   err_syntax.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/24 17:20:29 by maram             #+#    #+#             */
+/*   Updated: 2025/09/24 17:20:52 by maram            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
 int	err_newline(void)
 {
-	ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
+	ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n",
+		2);
 	return (0);
 }
 

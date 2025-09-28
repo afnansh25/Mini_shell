@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 14:28:33 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/13 14:02:24 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/24 17:10:21 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 char	*find_path_variable(t_shell *shell)
 {
-	int	i = 0;
+	int	i;
 
+	i = 0;
 	while (shell->envp[i])
 	{
 		if (ft_strncmp(shell->envp[i], "PATH=", 5) == 0)

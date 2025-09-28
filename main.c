@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:29:10 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/15 15:04:55 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/26 18:04:39 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ static int	shell_init(t_shell *sh, char **envp)
 	}
 	sh->envp = dup;
 	init_shlvl(&sh->envp);
-	init_uid(&sh->envp);
 	sh->exit_code = 0;
 	sh->exp = NULL;
 	return (0);

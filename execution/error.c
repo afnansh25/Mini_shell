@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 15:41:45 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/22 18:52:36 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/09/24 18:17:58 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,43 +75,43 @@ void	free_cmd_list(t_cmd *cmd_list)
 	}
 }
 
-void exit_child(t_exec *exec, t_cmd *cmd_list, int exit_code)
+void	exit_child(t_exec *exec, t_cmd *cmd_list, int exit_code)
 {
-    t_cmd *head;
+	t_cmd	*head;
 
-    head = cmd_list;
-    if (!head && exec)
-        head = exec->cmd_head;
-    if (exec && exec->shell)
-    {
-        free_envp(exec->shell->envp);
-        free_arr(exec->shell->exp);
-    }
-    free_cmd_list(head);
-    free_exec_data(exec);
+	head = cmd_list;
+	if (!head && exec)
+		head = exec->cmd_head;
+	if (exec && exec->shell)
+	{
+		free_envp(exec->shell->envp);
+		free_arr(exec->shell->exp);
+	}
+	free_cmd_list(head);
+	free_exec_data(exec);
 	close(STDIN_FILENO);
-    close(STDOUT_FILENO);
-    close(STDERR_FILENO);
-    exit(exit_code);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
+	exit(exit_code);
 }
 
-void error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code)
+void	error_exit(char *msg, t_exec *exec, t_cmd *cmd_list, int exit_code)
 {
 	ft_putstr_fd("minishell: ", 2);
-    if (exit_code == 127)
-    {
-        ft_putstr_fd(msg, 2);
-        if (errno == ENOENT && ft_strchr(msg, '/'))
-            ft_putendl_fd(": No such file or directory", 2);
-        else
-            ft_putendl_fd(": command not found", 2);
-    }
+	if (exit_code == 127)
+	{
+		ft_putstr_fd(msg, 2);
+		if (errno == ENOENT && ft_strchr(msg, '/'))
+			ft_putendl_fd(": No such file or directory", 2);
+		else
+			ft_putendl_fd(": command not found", 2);
+	}
 	else if (exit_code == 126 && errno == EISDIR)
-    {
-        ft_putstr_fd(msg, 2);
-        ft_putendl_fd(": is a directory", 2);
-    }
-    else
-        {perror(msg);}
+	{
+		ft_putstr_fd(msg, 2);
+		ft_putendl_fd(": is a directory", 2);
+	}
+	else
+		perror(msg);
 	exit_child(exec, cmd_list, exit_code);
 }

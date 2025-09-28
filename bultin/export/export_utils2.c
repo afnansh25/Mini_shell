@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 11:39:25 by codespace         #+#    #+#             */
-/*   Updated: 2025/09/14 18:06:52 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/24 16:21:14 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,9 @@ int	process_export_token(t_shell *shell, char *arg, int *had_error)
 		if (arg[1])
 			ft_putchar_fd(arg[1], 2);
 		ft_putendl_fd(": invalid option", 2);
-		ft_putendl_fd("export: usage: export [-nf] [name[=value] ...] or export -p", 2);
+		ft_putendl_fd(
+			"export: usage: export [-nf] [name[=value] ...] or export -p",
+			2);
 		return (2);
 	}
 	bang = ft_strchr(arg, '!');
@@ -92,26 +94,26 @@ int	export_err_id(char *arg, t_export_arg *o)
 	return (1);
 }
 
-char    **append_env(char **envp, char *entry)
+char	**append_env(char **envp, char *entry)
 {
-    char    **newv;
-    int      n;
-    int      i;
+	char	**newv;
+	int		n;
+	int		i;
 
-    n = 0;
-    while (envp && envp[n])
-        n++;
-    newv = (char **)malloc(sizeof(char *) * (n + 2));
-    if (!newv)
-        return (NULL);
-    i = 0;
-    while (i < n)
-    {
-        newv[i] = envp[i];
-        i++;
-    }
-    newv[n] = entry;
-    newv[n + 1] = NULL;
-    free(envp);
-    return (newv);
+	n = 0;
+	while (envp && envp[n])
+		n++;
+	newv = (char **)malloc(sizeof(char *) * (n + 2));
+	if (!newv)
+		return (NULL);
+	i = 0;
+	while (i < n)
+	{
+		newv[i] = envp[i];
+		i++;
+	}
+	newv[n] = entry;
+	newv[n + 1] = NULL;
+	free(envp);
+	return (newv);
 }

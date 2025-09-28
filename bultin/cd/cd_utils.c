@@ -6,7 +6,7 @@
 /*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 17:57:06 by maram             #+#    #+#             */
-/*   Updated: 2025/08/31 17:07:58 by maram            ###   ########.fr       */
+/*   Updated: 2025/09/26 18:05:30 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,32 +41,8 @@ int	find_key(char **envp, char *name)
 			return (i);
 		i++;
 	}
-	return (i); /* returns index of NULL if not found */
+	return (i);
 }
-
-// char	**append_env(char **envp, char *entry)
-// {
-// 	char	**new_env;
-// 	int		i;
-// 	int		j;
-
-// 	i = 0;
-// 	while (envp && envp[i])
-// 		i++;
-// 	new_env = (char **)malloc(sizeof(char *) * (i + 2));
-// 	if (!new_env)
-// 		return (NULL);
-// 	j = 0;
-// 	while (j < i)
-// 	{
-// 		new_env[j] = envp[j];
-// 		j++;
-// 	}
-// 	new_env[i] = entry;
-// 	new_env[i + 1] = NULL;
-// 	free(envp);
-// 	return (new_env);
-// }
 
 void	update_env_var(char *name, char *value, t_shell *shell)
 {
@@ -74,10 +50,10 @@ void	update_env_var(char *name, char *value, t_shell *shell)
 	char	*entry;
 
 	if (!name || !shell)
-		return;
+		return ;
 	entry = build_entry(name, value);
 	if (!entry)
-		return;
+		return ;
 	i = find_key(shell->envp, name);
 	if (shell->envp && shell->envp[i])
 	{
@@ -91,6 +67,7 @@ void	update_env_var(char *name, char *value, t_shell *shell)
 			free(entry);
 	}
 }
+
 void	cd_perror(char *path)
 {
 	char	*tmp;
@@ -103,4 +80,14 @@ void	cd_perror(char *path)
 	}
 	else
 		perror("minishell: cd");
+}
+
+char	*dup_env_pwd(t_shell *shell)
+{
+	char	*pwd;
+
+	pwd = get_env_value("PWD", shell);
+	if (!pwd)
+		return (NULL);
+	return (ft_strdup(pwd));
 }

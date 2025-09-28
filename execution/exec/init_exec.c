@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_exec.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 18:11:58 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/13 13:57:40 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/24 16:33:30 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,3 @@ t_exec	*init_exec_struct(t_cmd *cmd_list, t_shell *shell)
 	init_pids(exec, cmd_list);
 	return (exec);
 }
-
-
-

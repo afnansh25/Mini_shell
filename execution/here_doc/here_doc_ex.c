@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc_ex.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 14:27:52 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/13 13:54:15 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/24 17:13:18 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ static void	hd_write_line(int fd, char *line, t_shell *shell, int quoted)
 	free(line);
 }
 
-void	read_heredoc_input(int write_fd, t_heredoc *hdoc, t_shell *shell, t_cmd *cmd_list)
+void	read_heredoc_input(int write_fd, t_heredoc *hdoc, t_shell *shell,
+	t_cmd *cmd_list)
 {
 	char	*line;
 	int		code;

@@ -1,8 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   set_token.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/24 17:57:04 by maram             #+#    #+#             */
+/*   Updated: 2025/09/24 17:57:14 by maram            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	is_redir_type(int t)
 {
-	return (t == REDIR_IN || t == REDIR_OUT || t == REDIR_APPEND || t == HEREDOC);
+	return (t == REDIR_IN || t == REDIR_OUT
+		|| t == REDIR_APPEND || t == HEREDOC);
 }
 
 void	handle_pipe(t_token **cur, int *is_cmd)

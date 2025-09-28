@@ -3,14 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   run_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 13:23:30 by codespace         #+#    #+#             */
-/*   Updated: 2025/09/13 13:23:33 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/25 17:36:52 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static int	is_plain_var_reference(const char *s)
+{
+	int	i;
+
+	if (!s || s[0] != '$')
+		return (0);
+	if (s[1] == '\0')
+		return (0);
+	if (s[1] == '?' && s[2] == '\0')
+		return (1);
+	i = 1;
+	while (s[i])
+	{
+		if (!ft_isalnum((unsigned char)s[i]) && s[i] != '_')
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 int	is_blank(const char *s)
 {
@@ -68,7 +88,7 @@ void	handle_var_cmd(t_cmd *cmd, t_exec *exec, t_shell *shell)
 {
 	char	*val;
 
-	if (cmd->argv[0][0] != '$')
+	if (!is_plain_var_reference(cmd->argv[0]))
 		return ;
 	val = get_var_value(cmd->argv[0] + 1, shell);
 	ft_putstr_fd("minishell: ", 2);
@@ -85,4 +105,3 @@ void	handle_var_cmd(t_cmd *cmd, t_exec *exec, t_shell *shell)
 	}
 	exit_child(exec, exec->cmd_head, 127);
 }
-

@@ -3,29 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 14:39:59 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/14 18:07:43 by codespace        ###   ########.fr       */
+/*   Updated: 2025/09/24 15:46:13 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int   export_index_of(char **exp, char *name)
+int	export_index_of(char **exp, char *name)
 {
-    int i;
+	int	i;
 
-    if (!exp || !name)
-        return (-1);
-    i = 0;
-    while (exp[i])
-    {
-        if (ft_strncmp(exp[i], name, ft_strlen(name) + 1) == 0)
-            return (i);
-        i++;
-    }
-    return (-1);
+	if (!exp || !name)
+		return (-1);
+	i = 0;
+	while (exp[i])
+	{
+		if (ft_strncmp(exp[i], name, ft_strlen(name) + 1) == 0)
+			return (i);
+		i++;
+	}
+	return (-1);
 }
 
 int	export_add(char ***pexp, char *name)
@@ -43,41 +43,41 @@ int	export_add(char ***pexp, char *name)
 	return (env_grow_append(pexp, n, name));
 }
 
-void   export_remove(char ***pexp, char *name)
+void	export_remove(char ***pexp, char *name)
 {
-    int idx;
-    int i;
+	int	idx;
+	int	i;
 
-    if (!pexp || !*pexp)
-        return ;
-    idx = export_index_of(*pexp, name);
-    if (idx == -1)
-        return ;
-    free((*pexp)[idx]);
-    i = idx;
-    while ((*pexp)[i])
-    {
-        (*pexp)[i] = (*pexp)[i + 1];
-        i++;
-    }
+	if (!pexp || !*pexp)
+		return ;
+	idx = export_index_of(*pexp, name);
+	if (idx == -1)
+		return ;
+	free((*pexp)[idx]);
+	i = idx;
+	while ((*pexp)[i])
+	{
+		(*pexp)[i] = (*pexp)[i + 1];
+		i++;
+	}
 }
 
-void    export_print(char **envp, char **exp)
+void	export_print(char **envp, char **exp)
 {
-    char    **copy;
-    int             i;
+	char		**copy;
+	int			i;
 
-    copy = join_env_and_exp(envp, exp);
-    if (!copy)
-            return ;
-    sort_env_ptrs(copy);
-    i = 0;
-    while (copy[i])
-    {
-        print_decl(copy[i]);
-        i++;
-    }
-    free(copy);
+	copy = join_env_and_exp(envp, exp);
+	if (!copy)
+		return ;
+	sort_env_ptrs(copy);
+	i = 0;
+	while (copy[i])
+	{
+		print_decl(copy[i]);
+		i++;
+	}
+	free(copy);
 }
 
 int	exec_export(char **argv, t_shell *shell)
