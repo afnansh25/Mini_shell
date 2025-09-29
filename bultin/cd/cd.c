@@ -6,7 +6,7 @@
 /*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 13:54:17 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/09/26 18:29:25 by maram            ###   ########.fr       */
+/*   Updated: 2025/09/29 14:59:00 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,16 @@ char	*resolve_target(char **av, t_shell *shell, int *print_newpwd,
 void	set_logical_pwd(char **av, char *target_dir, char *newpwd,
 	t_shell *shell)
 {
-	if (!av[1] || (av[1][0] == '-' && av[1][1] == '-' && av[1][2] == '\0')
-		|| (av[1] && av[1][0] == '\0'))
+	if (!av || !av[1])
+	{
+		if (target_dir)
+			update_env_var("PWD", target_dir, shell);
+		else
+			update_env_var("PWD", newpwd, shell);
+		return ;
+	}
+	if ((av[1][0] == '-' && av[1][1] == '-' && av[1][2] == '\0')
+		|| (av[1][0] == '\0'))
 		update_env_var("PWD", target_dir, shell);
 	else if (av[1][0] == '-' && av[1][1] == '\0')
 		update_env_var("PWD", target_dir, shell);
