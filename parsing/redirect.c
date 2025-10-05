@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirect.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 17:44:19 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/24 17:56:54 by maram            ###   ########.fr       */
+/*   Updated: 2025/10/05 17:30:35 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,24 @@ void	handle_redir_append(t_cmd *cmd, t_token **token_ptr)
 		return ;
 	}
 	*token_ptr = (*token_ptr)->next;
+	if ((*token_ptr)->ambiguous)
+	{
+		cmd->redir_error = 1;
+		*token_ptr = (*token_ptr)->next;
+		return ;
+	}
 	filename = ft_strdup((*token_ptr)->value);
 	if (!filename)
 	{
 		cmd->redir_error = 1;
 		return ;
 	}
-	open_append_fd(cmd, filename);
+	if (!open_append_fd(cmd, filename))
+	{
+		free(filename);
+		*token_ptr = (*token_ptr)->next;
+		return ;
+	}
 	free(filename);
 	*token_ptr = (*token_ptr)->next;
 }

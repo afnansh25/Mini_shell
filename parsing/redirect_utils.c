@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirect_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 17:55:27 by maram             #+#    #+#             */
-/*   Updated: 2025/09/27 12:16:28 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/10/05 17:32:09 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,24 @@ void	handle_redir_in(t_cmd *cmd, t_token **token_ptr)
 	if (!*token_ptr || !(*token_ptr)->next)
 		return ;
 	*token_ptr = (*token_ptr)->next;
+	if ((*token_ptr)->ambiguous)
+	{
+		cmd->redir_error = 1;
+		*token_ptr = (*token_ptr)->next;
+		return ;
+	}
 	filename = ft_strdup((*token_ptr)->value);
 	if (!filename)
 	{
 		cmd->redir_error = 1;
 		return ;
 	}
-	open_read_fd(cmd, filename);
+	if (!open_read_fd(cmd, filename))
+	{
+		free(filename);
+		*token_ptr = (*token_ptr)->next;
+		return ;
+	}
 	free(filename);
 	*token_ptr = (*token_ptr)->next;
 }
@@ -57,9 +68,18 @@ void	handle_redir_out(t_cmd *cmd, t_token **token_ptr)
 	if (!(*token_ptr) || !(*token_ptr)->next)
 		return ;
 	*token_ptr = (*token_ptr)->next;
+	if ((*token_ptr)->ambiguous)
+	{
+		cmd->redir_error = 1;
+		*token_ptr = (*token_ptr)->next;
+		return ;
+	}
 	filename = ft_strdup((*token_ptr)->value);
 	if (!filename)
+	{
+		cmd->redir_error = 1;
 		return ;
+	}
 	if (cmd->outfile != -1)
 		close(cmd->outfile);
 	cmd->outfile = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);

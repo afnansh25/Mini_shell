@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/27 16:58:52 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/10/05 17:28:56 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ typedef struct s_token
 	char			*value;// What is the token? ("echo", ">", "file.txt")
 	t_token_type	type;// What kind? (WORD, REDIR, PIPE, etc.)
 	t_quote_type	quote;
+	int				ambiguous;
 	struct s_token	*next;// Next token in the line (linked list)
 }	t_token;
 

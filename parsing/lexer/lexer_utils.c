@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 11:25:15 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/24 17:23:02 by maram            ###   ########.fr       */
+/*   Updated: 2025/10/05 17:29:46 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ t_token	*new_token(char *token, t_token_type type, t_quote_type quote)
 	new_token->value = token;
 	new_token->type = type;
 	new_token->quote = quote;
+	new_token->ambiguous = 0;
 	new_token->next = NULL;
 	return (new_token);
 }

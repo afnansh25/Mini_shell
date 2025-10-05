@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:51:20 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/09/24 16:33:20 by maram            ###   ########.fr       */
+/*   Updated: 2025/10/05 17:34:42 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,16 +57,20 @@ void	wait_all_children(t_exec *exec, t_shell *shell)
 	i = 0;
 	while (i < exec->cmd_count)
 	{
-		if (waitpid(exec->pids[i], &st, 0) > 0)
-		{
-			if (i == exec->cmd_count - 1)
-			{
-				if (WIFEXITED(st))
-					shell->exit_code = WEXITSTATUS(st);
-				else if (WIFSIGNALED(st))
-					shell->exit_code = 128 + WTERMSIG(st);
-			}
-		}
+        if (waitpid(exec->pids[i], &st, 0) > 0)
+        {
+            if (i == exec->cmd_count - 1)
+            {
+                if (WIFEXITED(st))
+                    shell->exit_code = WEXITSTATUS(st);
+                else if (WIFSIGNALED(st))
+                {
+                	if (WTERMSIG(st) == SIGQUIT)
+                    ft_putstr_fd("Quit: 3\n", STDERR_FILENO);
+                    shell->exit_code = 128 + WTERMSIG(st);
+                }
+            }
+        }
 		i++;
 	}
 }

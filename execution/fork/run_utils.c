@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 13:23:30 by codespace         #+#    #+#             */
-/*   Updated: 2025/09/25 17:36:52 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/10/05 16:58:03 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	exec_or_error(char *path, t_cmd *cmd, t_exec *exec, t_shell *shell)
 void	handle_empty_or_blank(t_cmd *cmd, t_exec *exec)
 {
 	if (!cmd->argv || !cmd->argv[0])
-		exit(0);
+		exit_child(exec, exec->cmd_head, 0);
 	if (is_blank(cmd->argv[0]))
 	{
 		ft_putstr_fd("minishell: ", 2);
