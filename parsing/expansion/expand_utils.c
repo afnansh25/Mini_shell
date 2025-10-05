@@ -6,7 +6,7 @@
 /*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:50:52 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/10/05 17:29:27 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/10/05 17:54:09 by ashaheen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,18 @@ int	handle_empty_token(t_token **head, t_token **prev,
 	if (!(*curr)->value || (*curr)->value[0] != '\0'
 		|| (*curr)->quote != NO_QUOTE)
 		return (0);
-	if (*prev && is_redir((*prev)->type))
-	{
-		ft_putstr_fd("minishell: ambiguous redirect\n", 2);
-		sh->exit_code = 1;
-		return (-1);
-	}
+		if (*prev && is_redir((*prev)->type))
+		{
+			if (!(*curr)->ambiguous)
+			{
+				ft_putstr_fd("minishell: ambiguous redirect\n", 2);
+				(*curr)->ambiguous = 1;
+			}
+			sh->exit_code = 1;
+			*prev = *curr;
+			*curr = (*curr)->next;
+			return (2);
+		}
 	tmp = *curr;
 	if (*prev)
 		(*prev)->next = (*curr)->next;
@@ -92,12 +98,16 @@ int	remove_empty_tokens(t_token **head, t_shell *sh)
 	while (c)
 	{
 		r = handle_empty_token(head, &p, &c, sh);
-		if (r < 0)
-			return (1);
-		if (r > 0)
+		if (r == 1)
+			continue ;
+		if (r == 2)
 			continue ;
 		if (c->quote == NO_QUOTE && c->value && after_redir(p, c, sh))
-			return (1);
+		{
+			p = c;
+			c = c->next;
+			continue ;
+		}
 		p = c;
 		c = c->next;
 	}
