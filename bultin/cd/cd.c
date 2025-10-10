@@ -6,7 +6,7 @@
 /*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 13:54:17 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/09/29 14:59:00 by maram            ###   ########.fr       */
+/*   Updated: 2025/10/10 18:23:08 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,16 @@ char	*resolve_target(char **av, t_shell *shell, int *print_newpwd,
 		return (t);
 	}
 	if (av[1][0] == '-' && av[1][1] == '\0')
-	{
-		ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2);
-		return (NULL);
-	}
+        {
+                t = get_env_value("OLDPWD", shell);
+                if (!t || t[0] == '\0')
+                {
+                        ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2);
+                        return (NULL);
+                }
+                *print_newpwd = 1;
+                return (t);
+        }
 	if (av[1][0] == '~')
 		return (expand_tilde(av[1], shell, alloc));
 	return (av[1]);

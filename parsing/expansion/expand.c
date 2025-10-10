@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:50:47 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/09/25 17:10:59 by maabdulr         ###   ########.fr       */
+/*   Updated: 2025/10/08 15:47:35 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,28 +62,50 @@ char	*expand_variables(char *input, t_shell *shell)
 	return (x.res);
 }
 
-void	expand_token_list(t_token *token, t_shell *shell)
+static void	expand_one_token(t_token *tok, t_token *prev, t_shell *sh)
+{
+	char	*old;
+	char	*new;
+
+	old = tok->value;
+	new = expand_variables(tok->value, sh);
+	if (!new)
+	{
+		free(old);
+		tok->value = NULL;
+		return ;
+	}
+	if (prev && is_redir(prev->type)
+		&& tok->quote == NO_QUOTE && new[0] == '\0')
+	{
+		tok->ambiguous = 1;
+		sh->exit_code = 1;
+		free(new);
+		tok->value = old;
+		return ;
+	}
+	free(old);
+	tok->value = new;
+}
+
+void	expand_token_list(t_token *tok, t_shell *sh)
 {
 	t_token	*prev;
-	char	*expanded;
-	int		is_limiter;
+	int		is_lim;
 
 	prev = NULL;
-	while (token)
+	while (tok)
 	{
-		is_limiter = (prev && prev->type == HEREDOC);
-		if (!is_limiter && token->quote != SINGLE_QUOTE
-			&& (token->type == CMD || token->type == ARG
-				|| token->type == REDIR_IN || token->type == REDIR_OUT
-				|| token->type == REDIR_APPEND || token->type == HEREDOC
-				|| token->type == WORD))
-		{
-			expanded = expand_variables(token->value, shell);
-			free(token->value);
-			token->value = expanded;
-		}
-		remove_quote_markers(token->value);
-		prev = token;
-		token = token->next;
+		is_lim = (prev && prev->type == HEREDOC);
+		if (!is_lim && tok->quote != SINGLE_QUOTE
+			&& (tok->type == CMD || tok->type == ARG
+				|| tok->type == REDIR_IN || tok->type == REDIR_OUT
+				|| tok->type == REDIR_APPEND || tok->type == HEREDOC
+				|| tok->type == WORD))
+			expand_one_token(tok, prev, sh);
+		if (tok->value)
+			remove_quote_markers(tok->value);
+		prev = tok;
+		tok = tok->next;
 	}
 }

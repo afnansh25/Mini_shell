@@ -3,20 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   redirect_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 17:55:27 by maram             #+#    #+#             */
-/*   Updated: 2025/10/05 17:51:53 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/10/08 15:53:09 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	errno_msg(const char *s)
-{
-	ft_putstr_fd("minishell: ", 2);
-	perror(s);
-}
 
 int	open_read_fd(t_cmd *cmd, const char *filename)
 {
@@ -32,65 +26,71 @@ int	open_read_fd(t_cmd *cmd, const char *filename)
 	return (1);
 }
 
-void	handle_redir_in(t_cmd *cmd, t_token **token_ptr)
+void	handle_redir_in(t_cmd *cmd, t_token **token)
 {
 	char	*filename;
 
-	if (!*token_ptr || !(*token_ptr)->next)
+	if (!*token || !(*token)->next)
 		return ;
-	*token_ptr = (*token_ptr)->next;
-	if ((*token_ptr)->ambiguous)
+	*token = (*token)->next;
+	if ((*token)->ambiguous)
 	{
+		report_ambiguous_redirect(*token);
 		cmd->redir_error = 1;
-		*token_ptr = (*token_ptr)->next;
+		*token = (*token)->next;
 		return ;
 	}
-	filename = ft_strdup((*token_ptr)->value);
+	filename = ft_strdup((*token)->value);
 	if (!filename)
-	{
-		cmd->redir_error = 1;
-		return ;
-	}
+		return ((void)(cmd->redir_error = 1));
 	if (!open_read_fd(cmd, filename))
 	{
 		free(filename);
-		*token_ptr = (*token_ptr)->next;
+		*token = (*token)->next;
 		return ;
 	}
 	free(filename);
-	*token_ptr = (*token_ptr)->next;
+	*token = (*token)->next;
 }
 
-void	handle_redir_out(t_cmd *cmd, t_token **token_ptr)
+static int	open_outfile(t_cmd *cmd, char *file)
+{
+	if (cmd->outfile != -1)
+		close(cmd->outfile);
+	cmd->outfile = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (cmd->outfile == -1)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		perror(file);
+		cmd->redir_error = 1;
+		return (0);
+	}
+	return (1);
+}
+
+void	handle_redir_out(t_cmd *cmd, t_token **tok)
 {
 	char	*filename;
 
-	if (!(*token_ptr) || !(*token_ptr)->next)
+	if (!(*tok) || !(*tok)->next)
 		return ;
-	*token_ptr = (*token_ptr)->next;
-	if ((*token_ptr)->ambiguous)
+	*tok = (*tok)->next;
+	if ((*tok)->ambiguous)
 	{
+		report_ambiguous_redirect(*tok);
 		cmd->redir_error = 1;
-		*token_ptr = (*token_ptr)->next;
+		*tok = (*tok)->next;
 		return ;
 	}
-	filename = ft_strdup((*token_ptr)->value);
+	filename = ft_strdup((*tok)->value);
 	if (!filename)
 	{
 		cmd->redir_error = 1;
 		return ;
 	}
-	if (cmd->outfile != -1)
-		close(cmd->outfile);
-	cmd->outfile = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	if (cmd->outfile == -1)
-	{
-		ft_putstr_fd("minishell: ", 2);
-		perror(filename);
-		cmd->redir_error = 1;
-	}
+	open_outfile(cmd, filename);
 	free(filename);
-	*token_ptr = (*token_ptr)->next;
+	*tok = (*tok)->next;
 }
 
 int	open_append_fd(t_cmd *cmd, const char *filename)

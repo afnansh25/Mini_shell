@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc_sig.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:39:08 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/24 17:13:30 by maram            ###   ########.fr       */
+/*   Updated: 2025/10/10 19:17:18 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ void	sigint_heredoc_handler(int sig)
 	if (*p != -1)
 		close(*p);
 	close(STDIN_FILENO);
-	write(1, "\n", 1);
 }
 
 void	hd_install_sig(void)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 13:50:52 by maabdulr          #+#    #+#             */
-/*   Updated: 2025/10/05 17:54:09 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/10/07 16:41:55 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,25 +57,21 @@ int	after_redir(t_token *prev, t_token *curr, t_shell *sh)
 }
 
 int	handle_empty_token(t_token **head, t_token **prev,
-				t_token **curr, t_shell *sh)
+	t_token **curr, t_shell *sh)
 {
 	t_token	*tmp;
 
-	if (!(*curr)->value || (*curr)->value[0] != '\0'
-		|| (*curr)->quote != NO_QUOTE)
+	if (!(*curr)->value || (*curr)->value[0] || (*curr)->quote != NO_QUOTE)
 		return (0);
-		if (*prev && is_redir((*prev)->type))
-		{
-			if (!(*curr)->ambiguous)
-			{
-				ft_putstr_fd("minishell: ambiguous redirect\n", 2);
-				(*curr)->ambiguous = 1;
-			}
-			sh->exit_code = 1;
-			*prev = *curr;
-			*curr = (*curr)->next;
-			return (2);
-		}
+	if (*prev && is_redir((*prev)->type))
+	{
+		if (!(*curr)->ambiguous)
+			(*curr)->ambiguous = 1;
+		sh->exit_code = 1;
+		*prev = *curr;
+		*curr = (*curr)->next;
+		return (2);
+	}
 	tmp = *curr;
 	if (*prev)
 		(*prev)->next = (*curr)->next;

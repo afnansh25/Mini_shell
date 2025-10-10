@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:26:46 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/10/05 17:28:56 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/10/10 18:18:52 by maram            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,11 +218,11 @@ void			free_heredoc_list(t_heredoc_node *list);
 //redirct
 void			handle_redir_append(t_cmd *cmd, t_token **token_ptr);
 void			handle_redirection(t_cmd *cmd, t_token **token_ptr);
-
+void			report_ambiguous_redirect(t_token *token);
 // redirct_utils
 void			errno_msg(const char *s);
 int				open_read_fd(t_cmd *cmd, const char *filename);
-void			handle_redir_in(t_cmd *cmd, t_token **token_ptr);
+void			handle_redir_in(t_cmd *cmd, t_token **token);
 void			handle_redir_out(t_cmd *cmd, t_token **token_ptr);
 int				open_append_fd(t_cmd *cmd, const char *filename);
 
@@ -330,8 +330,7 @@ void			exit_child(t_exec *exec, t_cmd *cmd_list, int exit_code);
 int				exec_echo(char **av);
 
 //pwd		
-int				exec_pwd(char **av);
-
+int				exec_pwd(char **av, t_shell *shell);
 // env		
 int				exec_env(char **av, t_shell *shell);
 char			*get_env_value(char *name, t_shell *shell);

@@ -3,32 +3,46 @@
 /*                                                        :::      ::::::::   */
 /*   redirect.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashaheen <ashaheen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 17:44:19 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/10/05 17:51:02 by ashaheen         ###   ########.fr       */
+/*   Updated: 2025/10/07 16:45:45 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	handle_redir_append(t_cmd *cmd, t_token **token_ptr)
+void	errno_msg(const char *s)
+{
+	ft_putstr_fd("minishell: ", 2);
+	perror(s);
+}
+
+static int	validate_redir_target(t_cmd *cmd, t_token **tok)
+{
+	if (!*tok || !(*tok)->next)
+	{
+		cmd->redir_error = 1;
+		return (0);
+	}
+	*tok = (*tok)->next;
+	if ((*tok)->ambiguous)
+	{
+		report_ambiguous_redirect(*tok);
+		cmd->redir_error = 1;
+		*tok = (*tok)->next;
+		return (0);
+	}
+	return (1);
+}
+
+void	handle_redir_append(t_cmd *cmd, t_token **tok)
 {
 	char	*filename;
 
-	if (!*token_ptr || !(*token_ptr)->next)
-	{
-		cmd->redir_error = 1;
+	if (!validate_redir_target(cmd, tok))
 		return ;
-	}
-	*token_ptr = (*token_ptr)->next;
-	if ((*token_ptr)->ambiguous)
-	{
-		cmd->redir_error = 1;
-		*token_ptr = (*token_ptr)->next;
-		return ;
-	}
-	filename = ft_strdup((*token_ptr)->value);
+	filename = ft_strdup((*tok)->value);
 	if (!filename)
 	{
 		cmd->redir_error = 1;
@@ -37,11 +51,11 @@ void	handle_redir_append(t_cmd *cmd, t_token **token_ptr)
 	if (!open_append_fd(cmd, filename))
 	{
 		free(filename);
-		*token_ptr = (*token_ptr)->next;
+		*tok = (*tok)->next;
 		return ;
 	}
 	free(filename);
-	*token_ptr = (*token_ptr)->next;
+	*tok = (*tok)->next;
 }
 
 void	handle_redirection(t_cmd *cmd, t_token **token_ptr)
@@ -69,4 +83,18 @@ void	handle_redirection(t_cmd *cmd, t_token **token_ptr)
 		while (*token_ptr && (*token_ptr)->type != PIPE)
 			*token_ptr = (*token_ptr)->next;
 	}
+}
+
+void	report_ambiguous_redirect(t_token *token)
+{
+	if (!token)
+		return ;
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	if (token->value && token->value[0])
+	{
+		ft_putstr_fd(token->value, STDERR_FILENO);
+		ft_putendl_fd(": ambiguous redirect", STDERR_FILENO);
+	}
+	else
+		ft_putendl_fd("ambiguous redirect", STDERR_FILENO);
 }

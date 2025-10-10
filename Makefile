@@ -32,6 +32,7 @@ RESET = \033[0m
 
 CC          = cc
 FLAGS       = -Wall -Wextra -Werror -I.
+ASAN_FLAGS  = -fsanitize=address -g3 -O0
 rl_FLAGS    = -I/opt/vagrant/embedded/include/readline -L/opt/vagrant/embedded/lib -lreadline
 DEL         = rm -rf
 
@@ -39,33 +40,72 @@ DEL         = rm -rf
 ART_FILE = art/bow.txt
 
 # Hide command output
+.SILENT:
+# ---------------------------------------------------------------------
+
+# ===== Homebrew autodetect =====
+BREW_PREFIX ?= $(shell brew --prefix 2>/dev/null)
+ifeq ($(BREW_PREFIX),)
+# Fallbacks (Apple Silicon first, then Intel)
+BREW_PREFIX := /opt/homebrew
+endif
+
+# Readline (required)
+READLINE_ROOT := $(shell brew --prefix readline 2>/dev/null)
+ifeq ($(READLINE_ROOT),)
+READLINE_ROOT := $(BREW_PREFIX)/opt/readline
+endif
+
+# Ncurses (optional; only if present)
+NCURSES_ROOT := $(shell brew --prefix ncurses 2>/dev/null)
+# If brew didn't return a path, try common fallback
+ifeq ($(NCURSES_ROOT),)
+NCURSES_ROOT := $(BREW_PREFIX)/opt/ncurses
+endif
+
+# ===== Include / Link flags =====
+# Headers
+CPPFLAGS   += -I. $(LIBFT_INC) -I$(READLINE_ROOT)/include
+# Linker paths + libs
+LDFLAGS    += -L$(READLINE_ROOT)/lib
+LDLIBS     += -lreadline
+# Add ncurses only if its lib directory exists (avoids warnings)
+ifneq ($(wildcard $(NCURSES_ROOT)/lib),)
+LDFLAGS    += -L$(NCURSES_ROOT)/lib
+LDLIBS     += -lncurses
+endif
+# ---------------------------------------------------------------------
+
+
 all: $(NAME)
+	echo ""
+	echo "$(PINK)"
+	cat $(ART_FILE) || true
+	echo "$(RESET)"
 
 $(NAME): $(LIBFT) $(OBJ)
-	@echo ""
-	@echo "$(PINK)"
-	@cat $(ART_FILE) || true
-	@echo "$(RESET)"
-	@echo "$(GREEN)Linking minishell...$(RESET)"
-	@$(CC) $(FLAGS) -o $(NAME) $(OBJ) $(rl_FLAGS) $(LIBFT)
+	echo "$(GREEN)Linking minishell...$(RESET)"
+		$(CC) $(CFLAGS) $(CPPFLAGS) $(ASAN_FLAGS) -o $(NAME) $(OBJ) $(LIBFT) $(LDFLAGS) $(LDLIBS)
+
+asan: CFLAGS += $(ASAN_FLAGS)
+asan: LDFLAGS += $(ASAN_FLAGS)
+asan: $(NAME)
 
 %.o: %.c
-	@echo "$(BLUE)Compiling $<...$(RESET)"
-	@$(CC) $(FLAGS) $(LIBFT_INC) -c $< -o $@
+	echo "$(BLUE)Compiling $<...$(RESET)"
+		$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 $(LIBFT):
-	@$(MAKE) -s -C $(LIBFT_DIR)
+	$(MAKE) -C $(LIBFT_DIR)
 
 clean:
-	@echo "$(BLUE)Cleaning object files...$(RESET)"
-	@$(DEL) $(OBJ)
-	@$(MAKE) -s clean -C $(LIBFT_DIR)
+	echo "$(BLUE)Cleaning object files...$(RESET)"
+	rm -rf $(OBJ)
+	$(MAKE) clean -C $(LIBFT_DIR)
 
 fclean: clean
-	@echo "$(BLUE)Cleaning executable...$(RESET)"
-	@$(DEL) $(NAME)
-	@$(MAKE) -s fclean -C $(LIBFT_DIR)
+	echo "$(BLUE)Cleaning executable...$(RESET)"
+	rm -rf $(NAME)
+	$(MAKE) fclean -C $(LIBFT_DIR)
 
 re: fclean all
-
-.PHONY: clean fclean re

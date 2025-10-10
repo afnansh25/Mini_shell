@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc_ex.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 14:27:52 by ashaheen          #+#    #+#             */
-/*   Updated: 2025/09/24 17:13:18 by maram            ###   ########.fr       */
+/*   Updated: 2025/10/10 19:20:40 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,6 @@ int	process_all_heredocs(t_cmd *cmd, t_cmd *head, t_shell *shell)
 		fd = handle_here_doc(&cmd->heredocs[i], shell, head);
 		if (fd == -1)
 		{
-			shell->exit_code = 130;
 			if (cmd->infile != -1)
 			{
 				close(cmd->infile);
