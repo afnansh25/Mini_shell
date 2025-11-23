@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd_utils2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maram <maram@student.42.fr>                +#+  +:+       +#+        */
+/*   By: maabdulr <maabdulr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 18:22:41 by maram             #+#    #+#             */
-/*   Updated: 2025/10/10 18:23:42 by maram            ###   ########.fr       */
+/*   Updated: 2025/10/13 12:21:17 by maabdulr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,10 @@ int	exec_cd(char **av, t_shell *shell)
 	if (!oldpwd)
 		return (1);
 	target = resolve_target(av, shell, &print_newpwd, &alloc);
-        if (!target)
-                return (free(oldpwd), free(alloc), 1);
-        if (chdir(target))
-                return (cd_perror(target), free(oldpwd), free(alloc), 1);
+	if (!target)
+		return (free(oldpwd), free(alloc), 1);
+	if (chdir(target))
+		return (cd_perror(target), free(oldpwd), free(alloc), 1);
 	newpwd = getcwd(NULL, 0);
 	if (update_pwd_vars(oldpwd, newpwd, shell))
 		return (free(alloc), 1);
